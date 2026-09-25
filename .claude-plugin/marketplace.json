@@ -1,0 +1,14 @@
+{
+  "name": "chief-of-staff",
+  "owner": {
+    "name": "RB Code Labs"
+  },
+  "description": "The Chief of Staff skill pack for Geode / Agent Threads.",
+  "plugins": [
+    {
+      "name": "chief-of-staff",
+      "source": "./",
+      "description": "A chief of staff that works over your Obsidian vault: setup interview, daily brief, open-loop check-ins, meeting prep and a Friday review."
+    }
+  ]
+}
