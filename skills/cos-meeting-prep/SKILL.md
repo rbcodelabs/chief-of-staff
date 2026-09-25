@@ -31,7 +31,7 @@ Autonomy task types: `meeting_prep` (the prep note) and `action_items` (the foll
 ## Step 3: gather context
 
 For each attendee:
-- Find their note in `locations.people` (match full name, then first name + context). Link it. If there's no note, list them as "no note yet" (creating people notes is `note_filing`; propose it, and only create at L1+).
+- Find their note in `locations.people`: Read `<locations.people>/<Full name>.md` directly (a failed Read means there's no such note), and otherwise `vault_list` the folder or `vault_search` the name (match full name, then first name + context). No shell commands. Link it. If there's no note, list them as "no note yet" (creating people notes is `note_filing`; propose it, and only create at L1+).
 - Read their note for relationship, projects and anything flagged to raise.
 
 Then:
@@ -41,7 +41,7 @@ Then:
 
 ## Step 4: draft the prep
 
-Prep note path: `<locations.meetings>/YYYY-MM-DD <Meeting title>.md`.
+Prep note path: `<locations.meetings>/YYYY-MM-DD <Meeting title>.md`. To check whether it already exists, Read that path (a failed Read means it doesn't), or `vault_list` `locations.meetings` if the title might differ.
 
 ```
 # <Meeting title>

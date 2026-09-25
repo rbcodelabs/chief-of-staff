@@ -24,7 +24,7 @@ Turn one document into a short, linked extract in the right project note.
 ## Input
 
 - **One document reference**: a Google Drive or Docs link, a document title, a vault path, or pasted text.
-- **The project it belongs to.** If the user didn't say, ask ("Which project is this for?") and list the project notes in `locations.projects`.
+- **The project it belongs to.** If the user didn't say, ask ("Which project is this for?") and list the project notes in `locations.projects` (found with `vault_list`).
 
 If you're given several documents, handle the first one, report, and ask before moving to the next. Never search a Drive folder or vault folder and import everything in it.
 
@@ -35,7 +35,7 @@ Pick the path by reference type:
 | Reference | How to fetch |
 |---|---|
 | Drive or Docs link / title | Only if `sources.google_drive` is `true` **and** Google Workspace tools are available: find it (e.g. `search_files` by title, or `get_file_metadata` for a link), then read it with the matching reader: `read_doc` for Google Docs, `get_values` (after `get_spreadsheet` to list the sheets) for Google Sheets, `read_presentation` for Google Slides, `read_file_content` for other Drive files. Read-only. |
-| Vault path | Read the note with your file tools. |
+| Vault path | Read the note (a failed Read means it doesn't exist; try `vault_search` for the title). |
 | Pasted text | Use it as given. |
 
 If the Google tools aren't available, `google_drive` is `false`, or the fetch fails, say so plainly ("I couldn't reach Google Drive") and ask the user to paste the content. Never guess at a document's contents from its title.

@@ -39,7 +39,7 @@ Read `Chief of Staff/Profile.md` (or search for a note with `cos_version` in its
 2. **No profile:** start at step 1.
 3. **Profile exists but `setup_completed_at` is empty:** setup stopped after "go". Resume at the first unfinished step:
    - checked documents in `Setup Draft.md` without an `## Imported:` section or import note in their project → step 7;
-   - no `## Chief of Staff Brief` in any daily note → step 8;
+   - today's daily note (Read it at its known path) has no `## Chief of Staff Brief` → step 8;
    - otherwise → step 9.
    Say in one line where you're picking up.
 4. **Profile exists and `setup_completed_at` is set:** don't start over. Summarize the profile in three lines, then ask one question: "What do you want to update: profile details, projects, people, open loops, rituals, or something else?" Run only the matching interview topics from step 4, write the changes into a fresh `Setup Draft.md` (renaming the old one to `Setup Draft YYYY-MM-DD.md`), and on "go" apply only those sections. Re-offer rituals (step 9) only if the user asked about them or a ritual has no `schedule_id`.
@@ -58,9 +58,9 @@ Send one paragraph, then one question:
 
 Look, don't write:
 
-1. List the top-level folders of the vault with Glob (pattern `*/`) or `vault_search`. No shell commands (see `cos-contract`, "Tools: no shell, ever").
-2. Find the daily-note setup: read `.obsidian/daily-notes.json` (keys `folder`, `format`, `template`) and, if present, `.obsidian/plugins/periodic-notes/data.json`. If neither exists, look for a folder of date-named notes and infer the format (e.g. `2026-09-24.md` → `YYYY-MM-DD`). Default: folder `Daily`, format `YYYY-MM-DD`.
-3. Find existing folders for **meetings**, **people** and **projects**: match names case-insensitively (e.g. `Meetings`, `Meeting Notes`, `1-1s`; `People`, `Contacts`; `Projects`, `Work`). Prefer an existing folder over creating a new one. If several candidates fit, pick the one with the most notes and mention the choice.
+1. List the top-level folders of the vault with `vault_list` (no `path`, `recursive: false`). No shell commands (see `cos-contract`, "Tools: no shell, ever").
+2. Find the daily-note setup: Read `.obsidian/daily-notes.json` (keys `folder`, `format`, `template`) and `.obsidian/plugins/periodic-notes/data.json`. A failed Read just means that file doesn't exist. If neither exists, `vault_list` a likely folder (e.g. `Daily`, `Journal`) and infer the format from date-named notes (e.g. `2026-09-24.md` → `YYYY-MM-DD`). Default: folder `Daily`, format `YYYY-MM-DD`.
+3. Find existing folders for **meetings**, **people** and **projects** in the top-level listing: match names case-insensitively (e.g. `Meetings`, `Meeting Notes`, `1-1s`; `People`, `Contacts`; `Projects`, `Work`). Prefer an existing folder over creating a new one. If several candidates fit, `vault_list` each (with a small `limit`), pick the one with the most notes, and mention the choice.
 4. **Timezone:** read it from your session context. The host may provide a line with the local time, the IANA timezone (e.g. `America/Chicago`) and the UTC offset; use that IANA name. If there's no such line, make your best guess from what the context does say (for example an offset) and mark it "best guess, please confirm" in the draft. If there's nothing to go on, write "timezone: ? (tell me yours)". Never run a command to find it, and don't ask about it as its own question; the user confirms it in the draft.
 
 Say what you found in **one line**, e.g. "Found daily notes in `Journal/Daily` (YYYY-MM-DD), meetings in `Meetings`, and people in `People`. No projects folder yet, so project notes will go in `Projects/`." If the vault is empty, say "Your vault is empty, so I'll use simple folders for your notes." and move on. Don't create any folder now; folders appear when the first note is written into them.
@@ -168,3 +168,5 @@ Three lines. First work out the **next actual run** of the daily brief from toda
 > Talk to me in this thread any time: "prep me for my 1:1", "import this doc", "what's on my plate?"
 
 (Adjust to the rituals they actually turned on. If they declined the brief, drop the first line.)
+
+Every line is a complete sentence that stands on its own. Never write a lead-in that ends in a colon or trails off, such as "Today's Friday review already passed 3pm, so:". If a ritual's first run is later than usual (for example, today's review time has already passed), say it in a full sentence: "Your first Friday review is next Friday at 15:00."

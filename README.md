@@ -79,6 +79,15 @@ Structural tests (Node's built-in test runner, no dependencies) check skill fron
 
 ## Changelog
 
+### 0.1.3
+
+Fixes from a third live QA pass in Agent Threads:
+
+- **Listing uses `vault_list`.** Claude Code sessions in the host have no Glob or Grep tool, so the 0.1.2 instructions sent the model back to `ls`/`find`. Every listing step now uses the host's read-only `vault_list` tool. `vault_search` finds notes by content, and Read checks known paths (a failed Read means the note is missing). Nothing mentions Glob or Grep anymore.
+- **Updates never split the brief.** `## Chief of Staff Updates` always sits at the end of the daily note, after the whole brief section. Skills append to it, or add it at the end when missing. A re-run brief goes before it.
+- **The setup closing is complete sentences**, with no dangling lead-ins.
+- **Status-update Asks** hold only what the user needs from others. The user's own commitments go under in progress or next.
+
 ### 0.1.2
 
 Fixes from a second live QA pass in Agent Threads:

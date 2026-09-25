@@ -32,11 +32,14 @@ Scheduled rituals run unattended, and a permission prompt stalls them. So **neve
 
 | To… | Use | Never |
 |---|---|---|
-| List or find files and folders | Glob (e.g. pattern `*/` for top-level folders, `Meetings/*.md`), `vault_search` | no shell `ls` or `find` |
-| Search note contents or links | `vault_search`, `vault_get_backlinks`, `vault_get_outgoing_links`, `vault_get_note_metadata` | no shell grep |
-| Read a note | Read | no shell `cat` |
+| List the files and folders in a folder | `vault_list` with a vault-relative `path` (default: the vault root), `recursive` (default false) and an optional `limit` | no shell `ls` or `find` |
+| Find notes by name or content | `vault_search` | no shell `find` or grep |
+| Follow links | `vault_get_backlinks`, `vault_get_outgoing_links`, `vault_get_note_metadata` | no shell grep |
+| Read a note at a known path | Read. A failed Read means the note doesn't exist | no shell `cat` or `test -f` |
 | Create or change a note | Write, Edit | no shell `mkdir`, no redirects |
 | Get the time or timezone | your session context (see "Dates and times") | no shell `date`, no `readlink` |
+
+`vault_list` is the host's read-only listing tool; some sessions show it as `mcp__claude_threads__vault_list`. There is no glob or grep tool, so don't look for one. If `vault_list` isn't available in a session, use `vault_search` and Read, and say you couldn't list the folder. Never fall back to the shell.
 
 **Folders are created implicitly** when you write the first note into them. Never create an empty folder: `Meetings/` should appear only when the first meeting note is written into it.
 
@@ -86,7 +89,12 @@ Every run ends with a short summary in two parts:
 ```
 
 - Post it in the thread you're running in.
-- When a run other than the daily brief changed vault notes or needs the user, also append the summary to today's daily note under `## Chief of Staff Updates` as `### HH:MM <skill>`, where `HH:MM` is the actual current time, or `### <skill>` if you don't know it (create the section if missing; create the daily note if missing, per `locations.daily_notes`). Only `cos-daily-brief` writes under `## Chief of Staff Brief`, so the "last brief" is always easy to find.
+- When a run other than the daily brief changed vault notes or needs the user, also add the summary to today's daily note as `### HH:MM <skill>` under `## Chief of Staff Updates`, where `HH:MM` is the actual current time, or `### <skill>` if you don't know it. Only `cos-daily-brief` writes under `## Chief of Staff Brief`, so the "last brief" is always easy to find.
+- **`## Chief of Staff Updates` always sits at the END of the daily note, after the entire brief section** (including any `### Update HH:MM` subsections). To write there, read the whole note first:
+  - If `## Chief of Staff Updates` exists, append your `### …` entry at the end of that section.
+  - If it doesn't, append `## Chief of Staff Updates` and your entry at the very end of the note.
+  - Never insert anything inside or before the `## Chief of Staff Brief` section. An Edit that anchors on text in the brief will split it; anchor on the last lines of the note instead, or rewrite the whole note with the new section added at the end.
+  - If the daily note doesn't exist, create it per `locations.daily_notes`.
 - Keep it short. Say "Nothing needs you" when that's true.
 - Log every vault change made without asking (L1 or L2) as one line in the **Activity log** section of `Autonomy.md`: `- YYYY-MM-DD <task_type> (L1) — <what> — [[link]] — outcome: pending`. The outcome is settled later (see `cos-autonomy`, "Settle activity outcomes").
 
