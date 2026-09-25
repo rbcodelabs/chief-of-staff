@@ -20,7 +20,7 @@ Autonomy task type: `daily_brief`. The brief only writes its own section of the 
 
 1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout.
 2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). If it's missing, stop and offer `cos-setup`.
-3. Compute today's date in the profile's `timezone`.
+3. Work out today's date in the profile's `timezone` yourself, from the date and time in your context (see `cos-contract`, "Dates and times"; never run a shell command for it).
 4. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`.
 5. Find today's daily note: `<locations.daily_notes.folder>/<today formatted with locations.daily_notes.format>.md`. Find the most recent earlier daily note that contains a `## Chief of Staff Brief` heading; its date is the "last brief" date (if none, use yesterday). Only this skill writes that heading, so other skills' reports (under `## Chief of Staff Updates`) never count as a brief.
 

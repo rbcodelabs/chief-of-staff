@@ -325,3 +325,82 @@ test("no personal data or machine-specific paths in the pack", () => {
   }
   assert.deepEqual(offenders, []);
 });
+
+test("no skill instructs running Bash, shell or date commands", () => {
+  // Unattended rituals stall on a shell permission prompt, so shell use may
+  // only ever be mentioned as a prohibition.
+  const mention = /\b(?:bash|shell|terminal|command line)\b|`date\b|\bdate \+|\bIntl\./i;
+  const outright = /`date\s+[+-]|\bdate \+%|\bIntl\.DateTimeFormat|\bnpx\b|\bnode -e\b/;
+  const negation = /\b(?:never|don't|do not|no)\b/i;
+  const offenders: string[] = [];
+  for (const id of EXPECTED_SKILLS) {
+    const lines = read(join("skills", id, "SKILL.md")).split("\n");
+    lines.forEach((line, index) => {
+      if (outright.test(line) || (mention.test(line) && !negation.test(line))) {
+        offenders.push(`${id}:${index + 1}: ${line.trim()}`);
+      }
+    });
+  }
+  assert.deepEqual(offenders, []);
+  assert.match(read("skills/cos-contract/SKILL.md"), /### Dates and times: work them out yourself/);
+});
+
+test("date fields are YYYY-MM-DD and timestamps are ISO-8601 with offset", () => {
+  const date = /^\d{4}-\d{2}-\d{2}$/;
+  const timestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/;
+  const valueOf = (yaml: string, key: string) => {
+    const match = new RegExp(`^${key}:\\s*(.*?)\\s*(?:#.*)?$`, "m").exec(yaml);
+    return match ? match[1].replace(/^"(.*)"$/, "$1") : null;
+  };
+  for (const file of ["Now.md", "Autonomy.md"]) {
+    assert.match(valueOf(schemaYamlFor(file), "updated_at") ?? "", date, `schema ${file} updated_at`);
+    const template = frontmatter(read(join("templates", file))) ?? "";
+    assert.equal(valueOf(template, "updated_at"), "", `templates/${file} updated_at starts empty`);
+  }
+  assert.match(valueOf(schemaYamlFor("Profile.md"), "setup_completed_at") ?? "", timestamp);
+  assert.match(valueOf(schemaYamlFor("Setup Draft.md"), "created_at") ?? "", timestamp);
+
+  for (const id of EXPECTED_SKILLS) {
+    for (const line of read(join("skills", id, "SKILL.md")).split("\n")) {
+      if (line.includes("`updated_at`")) {
+        assert.ok(line.includes("YYYY-MM-DD"), `${id}: every updated_at instruction must say YYYY-MM-DD: ${line.trim()}`);
+      }
+    }
+  }
+  assert.match(read("skills/cos-setup/SKILL.md"), /`applied_at` set to the actual time the user said "go"/);
+});
+
+test("reports and headings use the actual time, not the scheduled time", () => {
+  assert.match(read("skills/cos-contract/SKILL.md"), /`HH:MM` in a heading is the actual time/);
+  assert.match(read("skills/cos-weekly-review/SKILL.md"), /actual time you write it, not the ritual's scheduled time/);
+});
+
+test("cos-setup names the next real run instead of always saying tomorrow", () => {
+  const setup = read("skills/cos-setup/SKILL.md");
+  assert.doesNotMatch(setup, /^> Tomorrow/m);
+  assert.match(setup, /next actual run/);
+});
+
+test("cos-setup's one-question rule carries a bad/good example", () => {
+  const setup = read("skills/cos-setup/SKILL.md");
+  assert.match(setup, /exactly one question mark/);
+  assert.match(setup, /- Bad: .*\?.*\?/);
+  assert.match(setup, /- Good: /);
+});
+
+test("weekly review omits an empty Proposals line and restates only recorded status", () => {
+  const weekly = read("skills/cos-weekly-review/SKILL.md");
+  assert.match(weekly, /When no proposals are due, leave the `Proposals:` line out of the proposed reply entirely/);
+  assert.match(weekly, /no update since/);
+  assert.match(read("skills/cos-contract/SKILL.md"), /Status lines restate only what is recorded/);
+});
+
+test("versions agree across plugin.json, marketplace.json, package.json and the changelog", () => {
+  const plugin = JSON.parse(read(".claude-plugin/plugin.json")) as { version: string };
+  const marketplace = JSON.parse(read(".claude-plugin/marketplace.json")) as { plugins: Array<{ version?: string }> };
+  const pkg = JSON.parse(read("package.json")) as { version: string };
+  assert.match(plugin.version, /^\d+\.\d+\.\d+$/);
+  assert.equal(marketplace.plugins[0].version, plugin.version);
+  assert.equal(pkg.version, plugin.version);
+  assert.ok(read("README.md").includes(`### ${plugin.version}`), "README changelog needs an entry for the current version");
+});
