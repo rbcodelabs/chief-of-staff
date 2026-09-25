@@ -79,6 +79,15 @@ Structural tests (Node's built-in test runner, no dependencies) check skill fron
 
 ## Changelog
 
+### 0.1.4
+
+Fixes from a fourth live QA pass. The host now removes Bash from Chief of Staff threads, so the pack must never need it.
+
+- **Templates are embedded.** `cos-setup` (Setup Draft, Profile, Now, Autonomy) and `cos-autonomy` (Autonomy) carry exact copies of the starter files inline, so they never list or read the pack's install folder. `templates/` stays the canonical copy, and a test checks the inline copies match it byte for byte.
+- **No scratchpad tool calls.** No no-op or echo commands; the model reasons in its reply. If a tool is unavailable, it says so and carries on with the rest.
+- **The weekly review treats "due today" as next, not slipped.** Status lines use the `Now.md` status words exactly (e.g. "waiting", not "active — waiting on").
+- **Heading times** come from the most recent context line and are never guessed forward. If unsure, the time is left out.
+
 ### 0.1.3
 
 Fixes from a third live QA pass in Agent Threads:

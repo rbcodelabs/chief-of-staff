@@ -8,7 +8,7 @@
     {
       "name": "chief-of-staff",
       "source": "./",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "description": "A chief of staff that works over your Obsidian vault: setup interview, daily brief, open-loop check-ins, meeting prep and a Friday review."
     }
   ]

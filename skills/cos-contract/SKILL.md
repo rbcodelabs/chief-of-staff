@@ -41,6 +41,10 @@ Scheduled rituals run unattended, and a permission prompt stalls them. So **neve
 
 `vault_list` is the host's read-only listing tool; some sessions show it as `mcp__claude_threads__vault_list`. There is no glob or grep tool, so don't look for one. If `vault_list` isn't available in a session, use `vault_search` and Read, and say you couldn't list the folder. Never fall back to the shell.
 
+**Never use a tool as a scratchpad**: no no-op or echo commands, and no tool calls just to think or print. Reason in your reply. **If a tool you need is unavailable**, say so in one line ("I couldn't list `Meetings/`; `vault_list` isn't available here") and carry on with the tools you do have. Don't stop, and don't look for a workaround through the shell.
+
+**The pack's own files are not in the vault.** Skills that write `Profile.md`, `Now.md`, `Autonomy.md` or `Setup Draft.md` carry the exact template inline. Use that embedded copy; never list or read the pack's install folder.
+
 **Folders are created implicitly** when you write the first note into them. Never create an empty folder: `Meetings/` should appear only when the first meeting note is written into it.
 
 ### Dates and times: work them out yourself
@@ -50,6 +54,7 @@ Scheduled rituals run unattended, and a permission prompt stalls them. So **neve
 - If your context gives you no current date at all, say so and ask the user; don't guess.
 - **Never fabricate a time.** If your context has today's date but no exact current time, write timestamps as the date only (`2026-09-25`), not with an invented time such as `2026-09-25T00:10:00+00:00`. Headings use the time only when you know it; otherwise write `### <skill>` without a time.
 - **`HH:MM` in a heading is the actual time you are writing it**, not the ritual's scheduled time. A weekly review scheduled for 15:00 that runs at 15:07 writes `### 15:07`.
+- **Take heading times from the most recent context line.** Late in a long turn, use the time from the latest line in your context that states the current time. Never estimate how much time has passed and write a later time than any context line shows. If you're not sure the time is still accurate, omit it and write `### <skill>`; the daily note's date already says which day it is.
 - Formats: `updated_at` and `touched`/`due` fields are dates (`YYYY-MM-DD`). `created_at`, `applied_at` and `setup_completed_at` are timestamps (ISO-8601 with offset, e.g. `2026-09-25T09:40:00-05:00`) taken at the moment the event happens, or date-only when the exact time isn't known.
 - **Compare dates exactly.** A `due` date equal to today is "due today", not "overdue". Only a `due` date before today is "overdue".
 

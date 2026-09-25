@@ -507,3 +507,61 @@ test("versions agree across plugin.json, marketplace.json, package.json and the 
   assert.equal(pkg.version, plugin.version);
   assert.ok(read("README.md").includes(`### ${plugin.version}`), "README changelog needs an entry for the current version");
 });
+
+/** Embedded template blocks: `<!-- embedded-template: X -->` then a ````markdown fence. */
+function embeddedTemplates(skillPath: string): Map<string, string> {
+  const blocks = new Map<string, string>();
+  for (const match of read(skillPath).matchAll(/<!-- embedded-template: (.+?) -->\n````markdown\n([\s\S]*?)````\n/g)) {
+    blocks.set(match[1], match[2]);
+  }
+  return blocks;
+}
+
+test("skills that write pack files embed the templates byte-for-byte", () => {
+  const expected: Record<string, string[]> = {
+    "cos-setup": ["Setup Draft.md", "Profile.md", "Now.md", "Autonomy.md"],
+    "cos-autonomy": ["Autonomy.md"],
+  };
+  for (const [id, files] of Object.entries(expected)) {
+    const blocks = embeddedTemplates(join("skills", id, "SKILL.md"));
+    assert.deepEqual([...blocks.keys()].sort(), [...files].sort(), `${id} embedded templates`);
+    for (const file of files) {
+      assert.equal(blocks.get(file), read(join("templates", file)), `${id}: embedded ${file} must match templates/${file} exactly`);
+    }
+  }
+  for (const id of EXPECTED_SKILLS.filter((skill) => !(skill in expected))) {
+    assert.equal(embeddedTemplates(join("skills", id, "SKILL.md")).size, 0, `${id} should not embed templates`);
+  }
+});
+
+test("no skill reads or lists the pack's templates directory", () => {
+  for (const id of EXPECTED_SKILLS) {
+    const body = read(join("skills", id, "SKILL.md"));
+    assert.doesNotMatch(body, /templates\//, `${id} refers to the templates directory`);
+    assert.doesNotMatch(body, /\.\.\/\.\.\//, `${id} refers to a path outside its skill folder`);
+  }
+  assert.match(read("skills/cos-contract/SKILL.md"), /never list or read the pack's install folder/);
+});
+
+test("contract forbids scratchpad tool calls and continues when a tool is unavailable", () => {
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /\*\*Never use a tool as a scratchpad\*\*: no no-op or echo commands/);
+  assert.match(contract, /Reason in your reply\./);
+  assert.match(contract, /\*\*If a tool you need is unavailable\*\*, say so .* carry on with the tools you do have/);
+});
+
+test("heading times come from the most recent context line and are never guessed later", () => {
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /\*\*Take heading times from the most recent context line\.\*\*/);
+  assert.match(contract, /Never estimate how much time has passed and write a later time/);
+  assert.match(contract, /If you're not sure the time is still accurate, omit it/);
+});
+
+test("weekly review: due today is not slipped, and status words match Now.md exactly", () => {
+  const weekly = read("skills/cos-weekly-review/SKILL.md");
+  assert.match(weekly, /\*\*Slipped means overdue, and nothing else\.\*\*/);
+  assert.match(weekly, /A loop due today has not slipped: list it first under \*\*What's next\*\* as "Due today: …"/);
+  assert.match(weekly, /\*\*Use the `Now\.md` status words exactly\*\*: `active`, `blocked`, `waiting`, `done`, `dropped`/);
+  const slipped = /## What slipped\n([\s\S]*?)\n## /.exec(weekly);
+  assert.ok(slipped && !/due today/i.test(slipped[1]), "the example What slipped section must not contain a due-today item");
+});

@@ -21,7 +21,7 @@ How much the chief of staff does on its own, per task type, and how that changes
 ## Step 0: contract and profile
 
 1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout; its hard limits apply at every level.
-2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile), then `<cos_folder>/Autonomy.md`. If `Autonomy.md` is missing but the profile exists, recreate it from the pack's `templates/Autonomy.md` (all task types at L0) and say so.
+2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile), then `<cos_folder>/Autonomy.md`. If `Autonomy.md` is missing but the profile exists, recreate it from the Autonomy template in "Embedded template" at the end of this skill (all task types at L0; set `updated_at` to today, `YYYY-MM-DD`) and say so. Don't look for the pack's files on disk.
 
 ## Task types
 
@@ -122,3 +122,87 @@ If the user declines a promotion, reset `last 10 outcomes` to `—` (so you don'
 ## Report
 
 When asked "what are you allowed to do?", list each task type with its level in one line each, plus the hard limits from `cos-contract` in one sentence.
+
+## Embedded template
+
+An exact copy of the pack's Autonomy template, for recreating a missing `Autonomy.md`. Copy the contents (without the fence), set `updated_at` to today (`YYYY-MM-DD`), and write it with Write.
+
+### Autonomy template (`Autonomy.md`)
+
+<!-- embedded-template: Autonomy.md -->
+````markdown
+---
+cos_version: 1
+updated_at: ""
+---
+
+# Autonomy
+
+How much your chief of staff does on its own, per task type. Everything starts at L0.
+
+- **L0 draft**: drafts for you, waits for approval before touching other notes.
+- **L1 act and report**: makes vault-only changes and reports them with links.
+- **L2 act and batch**: makes vault-only changes and reports them in the weekly review.
+
+Anything that would reach another person is always a draft, whatever the level. Only your "yes" changes a level; ask any time to change one. The daily brief only writes its own section, so it stays at L0.
+
+## daily_brief
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## meeting_prep
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## action_items
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## open_loops_update
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## weekly_review
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## status_update_draft
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## note_filing
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## Pending approvals
+
+<!-- One line per draft waiting for you. e.g.
+- 2026-09-26 meeting_prep — prep for roadmap review — [[Meetings/2026-09-26 Roadmap review]] — awaiting
+-->
+
+## Activity log
+
+<!-- Vault changes made without asking (L1/L2). Each starts as "outcome: pending" and is settled by the next brief (L1) or weekly review (L2): kept as written = approved, edited by you = approved-with-edits, reverted or "that was wrong" = rejected. e.g.
+- 2026-09-26 open_loops_update (L1) — marked "Draft launch FAQ" done — [[Chief of Staff/Now]] — outcome: pending
+-->
+
+## Change log
+
+<!-- Level changes and why. e.g.
+- 2026-10-10 meeting_prep L0 → L1 — you approved the last 10 prep notes
+-->
+````
