@@ -348,9 +348,55 @@ test("no skill instructs running Bash, shell or date commands", () => {
   assert.match(contract, /### Dates and times: work them out yourself/);
   assert.match(contract, /### Tools: no shell, ever/);
   assert.match(contract, /never run a Bash, shell or terminal command for anything/);
-  for (const tool of ["Glob", "Read", "Write", "vault_search"]) {
+  for (const tool of ["`vault_list`", "Read", "Write", "`vault_search`"]) {
     assert.ok(contract.includes(tool), `cos-contract must direct the model to ${tool}`);
   }
+  assert.ok(contract.includes("`mcp__claude_threads__vault_list`"), "cos-contract must name vault_list's host-prefixed form");
+  assert.match(contract, /A failed Read means the note doesn't exist/);
+});
+
+test("no Glob or Grep tool references: listing uses vault_list", () => {
+  // Claude Code sessions in the host have no Glob/Grep tool, so naming one sends
+  // the model back to the shell. Only a "there is none" note may mention them.
+  const allowed = /there is no glob or grep tool|not available|no shell/i;
+  const offenders: string[] = [];
+  const files = [
+    ...EXPECTED_SKILLS.map((id) => join("skills", id, "SKILL.md")),
+    "docs/profile-schema.md",
+    ...TEMPLATES.map((file) => join("templates", file)),
+  ];
+  for (const file of files) {
+    read(file)
+      .split("\n")
+      .forEach((line, index) => {
+        if (/\b(?:glob|grep)\b/i.test(line) && !allowed.test(line)) offenders.push(`${file}:${index + 1}`);
+        if (/\b(?:Glob|Grep)\b/.test(line)) offenders.push(`${file}:${index + 1} (tool name)`);
+      });
+  }
+  assert.deepEqual(offenders, []);
+  for (const id of ["cos-setup", "cos-daily-brief", "cos-weekly-review", "cos-open-loops", "cos-meeting-prep"]) {
+    assert.ok(read(join("skills", id, "SKILL.md")).includes("`vault_list`"), `${id} must list folders with vault_list`);
+  }
+});
+
+test("Chief of Staff Updates always goes at the end of the daily note, after the brief", () => {
+  assert.match(
+    read("skills/cos-contract/SKILL.md"),
+    /\*\*`## Chief of Staff Updates` always sits at the END of the daily note, after the entire brief section\*\*/,
+  );
+  assert.match(read("skills/cos-contract/SKILL.md"), /Never insert anything inside or before the `## Chief of Staff Brief` section/);
+  const weekly = read("skills/cos-weekly-review/SKILL.md");
+  assert.match(weekly, /Add it at the \*\*end\*\* of the daily note/);
+  assert.match(weekly, /Never insert it inside or above the `## Chief of Staff Brief` section/);
+  assert.match(read("skills/cos-daily-brief/SKILL.md"), /`## Chief of Staff Updates` \(written by other skills\) stays last/);
+  assert.match(read("skills/cos-open-loops/SKILL.md"), /always goes at the end of the note, after the whole brief/);
+  assert.match(read("docs/profile-schema.md"), /always comes last in the note, after the whole brief section/);
+});
+
+test("setup closing is complete sentences; status Asks are only needs from others", () => {
+  assert.match(read("skills/cos-setup/SKILL.md"), /Every line is a complete sentence that stands on its own\. Never write a lead-in that ends in a colon/);
+  assert.match(read("skills/cos-weekly-review/SKILL.md"), /holds only things the user needs \*from others\*/);
+  assert.match(read("skills/cos-weekly-review/SKILL.md"), /never under Asks/);
 });
 
 test("folders are created implicitly, never empty", () => {

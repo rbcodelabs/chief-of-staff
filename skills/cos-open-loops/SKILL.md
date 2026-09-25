@@ -34,7 +34,7 @@ A thread holds only one proposed reply, and the weekly review sets one on Friday
 
 Parse every unchecked loop line in `Now.md` (grammar: `- [ ] <what> — <status> — touched YYYY-MM-DD[ — due YYYY-MM-DD][ — [[link]]]`). A loop is **stale** when today minus `touched` is more than `rituals.open_loops_check.stale_after_days` (default 5).
 
-Before asking, look for evidence the loop moved since `touched`: search the vault (`vault_search`, backlinks on the linked note, recent daily and meeting notes) for the loop's subject.
+Before asking, look for evidence the loop moved since `touched`. Use `vault_search` for the loop's subject and `vault_get_backlinks` on its linked note. Read the daily notes since `touched` at their known paths (a failed Read means there's no note that day), and use `vault_list` on `locations.meetings` to find meeting notes dated since then. No shell commands (see `cos-contract`, "Tools: no shell, ever").
 
 - **Evidence found, `open_loops_update` at L1 or above:** update `touched` to the evidence date, log it in the Activity log with `outcome: pending`, and don't ask about it.
 - **Evidence found, at L0:** don't edit. It becomes an **evidence-based** question: "Looks like this moved on <date> ([[evidence]]). Mark it touched?"
@@ -66,7 +66,7 @@ Deliver it:
 
 - **Scheduled / other thread:** `threads_set_proposed_reply` with `threadId: home_thread_id` and the text above. It cannot target the current thread, which is why the home thread id is stored in the profile.
 - **You are the home thread:** ask the same questions directly in the conversation instead.
-- **Home thread unreachable** (empty id, call fails): report "I couldn't reach the Chief of Staff thread", add the questions to today's daily note under `## Chief of Staff Updates` as `### HH:MM Check-in`, and stop.
+- **Home thread unreachable** (empty id, call fails): report "I couldn't reach the Chief of Staff thread", add the questions to today's daily note as `### HH:MM Check-in` under `## Chief of Staff Updates`, and stop. That section always goes at the end of the note, after the whole brief; see `cos-contract` §5.
 
 Record the check-in under **Pending approvals** in `Autonomy.md`: `- YYYY-MM-DD open_loops_update — check-in: <loop names> — awaiting`.
 

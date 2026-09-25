@@ -22,7 +22,7 @@ Autonomy task type: `daily_brief`. The brief only writes its own section of the 
 2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). If it's missing, stop and offer `cos-setup`.
 3. Work out today's date in the profile's `timezone` yourself, from the date and time in your context (see `cos-contract`, "Dates and times"; never run a shell command for it).
 4. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`.
-5. Find today's daily note: `<locations.daily_notes.folder>/<today formatted with locations.daily_notes.format>.md`. Find the most recent earlier daily note that contains a `## Chief of Staff Brief` heading; its date is the "last brief" date (if none, use yesterday). Only this skill writes that heading, so other skills' reports (under `## Chief of Staff Updates`) never count as a brief.
+5. Find today's daily note: Read `<locations.daily_notes.folder>/<today formatted with locations.daily_notes.format>.md` (a failed Read means it doesn't exist yet). Find the "last brief": `vault_list` the daily-notes folder (with `recursive: true` if the format has sub-folders), then Read the most recent earlier notes, newest first, until one contains a `## Chief of Staff Brief` heading. Its date is the "last brief" date; if you find none within the last 14 days, use yesterday. Don't use shell commands (see `cos-contract`, "Tools: no shell, ever"). Only this skill writes that heading, so other skills' reports (under `## Chief of Staff Updates`) never count as a brief.
 
 ## Step 1: settle yesterday's L1 activity
 
@@ -30,7 +30,7 @@ For each **Activity log** line in `Autonomy.md` at L1 with `outcome: pending` an
 
 ## Step 2: gather
 
-**Meetings (only when a calendar is connected).** If `sources.calendar` is not `"none"` and a matching calendar tool is available, read today's events (read-only). If `sources.calendar` names a tool that isn't available or the call fails, write "I couldn't reach <name> today" instead of a meetings list. If `sources.calendar` is `"none"`, **omit the meetings section entirely** (don't mention calendars). For each meeting, check `locations.meetings` for a prep note for today (`YYYY-MM-DD <title>.md` or a note linking the meeting): link it as "prep done", otherwise add "prep offered: reply 'prep <meeting>'". Never list a meeting that didn't come from the calendar.
+**Meetings (only when a calendar is connected).** If `sources.calendar` is not `"none"` and a matching calendar tool is available, read today's events (read-only). If `sources.calendar` names a tool that isn't available or the call fails, write "I couldn't reach <name> today" instead of a meetings list. If `sources.calendar` is `"none"`, **omit the meetings section entirely** (don't mention calendars). For each meeting, look for a prep note for today in `locations.meetings` (`vault_list` the folder once and match `YYYY-MM-DD <title>.md`, or `vault_search` for the meeting title): link it as "prep done", otherwise add "prep offered: reply 'prep <meeting>'". Never list a meeting that didn't come from the calendar.
 
 **Top 3 priorities.** The first three items of **Priorities** in `Now.md`. If fewer than three exist, show what's there; if none, say "No priorities set; want to pick some?"
 
@@ -42,13 +42,16 @@ For each **Activity log** line in `Autonomy.md` at L1 with `outcome: pending` an
 
 **Waiting for you.** Everything under **Pending approvals**, plus any promotion or demotion proposal that became due in step 1 (as a question, never pre-answered).
 
-**Meeting notes ready for action items.** Meeting notes in `locations.meetings` dated since the last brief that have content under `## Notes` or `## Action items` and no `Processed into loops on` line. Offer each one: "reply 'action items <meeting>'" (the pass itself is in `cos-meeting-prep`, step 5).
+**Meeting notes ready for action items.** `vault_list` `locations.meetings` and Read the notes dated since the last brief. Offer the ones that have content under `## Notes` or `## Action items` and no `Processed into loops on` line. Offer each one: "reply 'action items <meeting>'" (the pass itself is in `cos-meeting-prep`, step 5).
 
 ## Step 3: write
 
 Create today's daily note if it's missing: if `.obsidian/daily-notes.json` names a `template`, start from that template's contents; otherwise create an empty note. Write it with the Write tool; any folders in the path (including sub-folders the format implies) are created implicitly. No shell commands.
 
-Append (don't overwrite existing content). If a `## Chief of Staff Brief` section already exists today (for example the brief was re-run), add a `### Update HH:MM` subsection at the end of it instead of a second `## Chief of Staff Brief` heading.
+Add to the note without overwriting existing content. Read the whole note first, then place the brief so that `## Chief of Staff Updates` (written by other skills) stays last:
+
+- **No brief yet today:** if `## Chief of Staff Updates` exists, put `## Chief of Staff Brief` immediately before it; otherwise append the brief at the end of the note.
+- **Brief already there** (for example the brief was re-run): add a `### Update HH:MM` subsection at the end of the brief section, still before any `## Chief of Staff Updates`. Never add a second `## Chief of Staff Brief` heading.
 
 ```
 ## Chief of Staff Brief

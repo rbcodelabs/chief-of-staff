@@ -122,7 +122,7 @@ Body: checkbox sections **Profile**, **Projects**, **People**, **Open loops** an
 ## Daily note sections
 
 - `## Chief of Staff Brief`: written only by `cos-daily-brief`. A re-run on the same day adds `### Update HH:MM` under it. The most recent daily note with this heading marks the "last brief".
-- `## Chief of Staff Updates`: reports from every other skill, each as `### HH:MM <skill>`.
+- `## Chief of Staff Updates`: reports from every other skill, each as `### HH:MM <skill>`. It always comes last in the note, after the whole brief section: skills append to it, or append it at the end of the note when missing. Nothing is ever inserted inside or before the brief.
 
 Meeting notes whose action items have been processed end their `## Action items` section with `Processed into loops on YYYY-MM-DD.`
 
