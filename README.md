@@ -75,7 +75,26 @@ There's no telemetry. Everything is measured from your own vault.
 npm test
 ```
 
-Structural tests (Node's built-in test runner, no dependencies) check skill frontmatter, cross-references between skills, that templates match the schema, that autonomy task types agree, and that no personal data slipped in.
+Structural tests (Node's built-in test runner, no dependencies) check skill frontmatter, cross-references between skills, that templates match the schema, that autonomy task types agree, and that no personal data slipped in. They also check that no skill tells the model to run shell commands, and that date fields use the documented formats.
+
+## Changelog
+
+### 0.1.1
+
+Fixes found in a live first-run QA in Agent Threads:
+
+- **No shell commands for dates.** Skills work out dates, weekdays, ISO weeks and timezone offsets from the current date and time in context. Previously an unattended weekly review stalled on a shell permission prompt.
+- **Setup's closing line names the next real run** (e.g. "Monday at 8:00" when setup finishes on a Friday) instead of always saying "tomorrow".
+- **Setup Draft `applied_at`** records the actual time of "go", not a copy of `created_at`.
+- **`updated_at` is always a date** (`YYYY-MM-DD`). Timestamps (`created_at`, `applied_at`, `setup_completed_at`) are ISO-8601 with offset.
+- **Daily-note update headings use the actual run time**, not the scheduled time.
+- **The weekly review's proposed reply leaves out `Proposals:`** when none are due.
+- **Status updates restate only what's recorded.** Unknowns read "waiting on X (no update since DATE)" rather than an invented state.
+- **Setup asks strictly one question per message**, with a bad/good example in the skill.
+
+### 0.1.0
+
+First release: eight `cos-*` skills, vault templates, profile schema, and structural tests.
 
 ## License
 

@@ -20,7 +20,7 @@ Two modes: **Check in** (usually a scheduled run) and **Apply answers** (in the 
 
 1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout.
 2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). Stop and offer `cos-setup` if it's missing.
-3. Compute today in the profile's `timezone`.
+3. Work out today (and its weekday, 0 = Sunday) in the profile's `timezone` yourself, from the date and time in your context (see `cos-contract`, "Dates and times"; never run a shell command for it).
 4. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`.
 5. Call `threads_get_current` to learn whether you are the home thread (`id == home_thread_id`) and whether you were started by a schedule.
 
@@ -92,7 +92,7 @@ When the user sends a check-in answer (the message starts with "Open-loops check
 
 Then:
 
-1. Update `updated_at` in `Now.md` frontmatter.
+1. Set `updated_at` in `Now.md` frontmatter to today (`YYYY-MM-DD`).
 2. Remove the **Pending approvals** line for this check-in.
 3. **Record at most one outcome per check-in, and only if it had evidence-based questions.** Kept `(default)` answers say nothing about your judgment, so never record them. Across the evidence-based questions: if the user reversed any (e.g. "no, it didn't move"), record one `rejected`; otherwise if they changed any, one `approved-with-edits`; otherwise one `approved`. Record it for `open_loops_update` as described in `cos-autonomy`.
 4. Reply with the summary: what changed, with a link to `[[<cos_folder>/Now]]`.

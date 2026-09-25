@@ -33,6 +33,8 @@ status_update:
   format: "bullets: shipped / in progress / risks / asks"
 ```
 
+**Date and time formats (all pack files):** `updated_at`, `touched` and `due` are dates, `YYYY-MM-DD`. `created_at`, `applied_at` and `setup_completed_at` are timestamps, ISO-8601 with offset (e.g. `2026-09-25T09:40:00-05:00`), recorded when the event actually happens. Empty (`""`) means "not yet". Skills work dates out from the current date and time in their context and never run shell commands to do it.
+
 Field notes:
 
 - **`home_thread_id`** is the id returned by `threads_get_current` in the thread where setup ran. Scheduled rituals run in their own threads and cannot set a proposed reply on themselves, so they target this id.
@@ -110,7 +112,7 @@ The one review note written during setup, kept afterwards as a record.
 cos_version: 1
 status: draft                  # draft | applied
 created_at: 2026-09-25T09:30:00-05:00
-applied_at: ""                 # set when the user says "go"
+applied_at: ""                 # the actual time the user said "go"; never a copy of created_at
 ```
 
 Body: checkbox sections **Profile**, **Projects**, **People**, **Open loops** and **Documents to import**. Each item is one line and starts checked (`- [x]`); the user unchecks what they don't want. Only checked items are applied on "go". At most 3 documents are checked for import during setup; the rest are listed unchecked with "(later)".

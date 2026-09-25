@@ -85,7 +85,7 @@ Replace `pending` with the outcome on the log line, append it to the task type's
 
 ## Update the ledger
 
-In the task type's table: append the outcome to `last 10 outcomes` (drop the oldest beyond 10). Update `streak`: add 1 for `approved`/`approved-with-edits`, reset to 0 for `rejected`. Update `updated_at`. Then run the promotion and demotion checks. Never record outcomes for `daily_brief`.
+In the task type's table: append the outcome to `last 10 outcomes` (drop the oldest beyond 10). Update `streak`: add 1 for `approved`/`approved-with-edits`, reset to 0 for `rejected`. Set `updated_at` to today (`YYYY-MM-DD`). Then run the promotion and demotion checks. Never record outcomes for `daily_brief`.
 
 ## Promotion
 

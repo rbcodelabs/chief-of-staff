@@ -20,7 +20,7 @@ Autonomy task types: `weekly_review` (the review and any cleanup of `Now.md`) an
 
 1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout.
 2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). Stop and offer `cos-setup` if it's missing.
-3. Compute today and the ISO week (`YYYY-Www`, e.g. `2026-W39`) in the profile's `timezone`.
+3. Work out today, the current time and the ISO week (`YYYY-Www`, e.g. `2026-W39`) in the profile's `timezone` yourself, from the date and time in your context (see `cos-contract`, "Dates and times"). Never run a shell command for this; this ritual runs unattended and a permission prompt stalls it.
 4. Read `<cos_folder>/Now.md`, `<cos_folder>/Autonomy.md`, and the most recent earlier review in `<cos_folder>/Weekly/` if one exists.
 5. **Review window:** from the day after the previous weekly review's date through today, so weekend and late-week activity is never missed. If there is no previous review, use the last 7 days.
 
@@ -67,7 +67,14 @@ The weekly note is this task's review surface, so write it at any level. Cleanup
 
 ## Step 4: draft the status update
 
-Write it for `status_update.audience` in `status_update.format` from the profile (e.g. "bullets: shipped / in progress / risks / asks"). Draw only on what the window's notes show. Keep it ready to paste: no internal links, no private worries unless the user flagged them as shareable, names as the audience would know them.
+Write it for `status_update.audience` in `status_update.format` from the profile (e.g. "bullets: shipped / in progress / risks / asks"). Draw only on what the window's notes show.
+
+**Each status line restates only what `Now.md` or a note records.** Don't infer a state that isn't written down (not started, on track, delayed, blocked). For a waiting-on item or any loop with no newer record, write "waiting on <X> (no update since <touched date>)".
+
+- Bad: "Legal review hasn't started." (The notes only say you're waiting on it.)
+- Good: "Waiting on legal review (no update since 2026-09-20)."
+
+Keep it ready to paste: no internal links, no private worries unless the user flagged them as shareable, names as the audience would know them.
 
 - **L0** (default): put it under **Status update (draft)** marked `> Draft for your review. Reply "looks good" or tell me what to change.`, and add a **Pending approvals** line. When the user replies, record the outcome (see `cos-autonomy`) and update the text.
 - **L1** (the maximum): put it under **Status update (draft)** marked `> Ready to paste.`, log it in the Activity log with `outcome: pending`, and report it; no approval step.
@@ -80,7 +87,7 @@ Run the promotion and demotion checks from `cos-autonomy` for every task type. L
 
 ## Step 6: report
 
-Post the contract's "What I did / What needs you" summary with a link to the weekly note. Add a one-line pointer to the weekly note in today's daily note under `## Chief of Staff Updates` as `### HH:MM cos-weekly-review`.
+Post the contract's "What I did / What needs you" summary with a link to the weekly note. Add a one-line pointer to the weekly note in today's daily note under `## Chief of Staff Updates` as `### HH:MM cos-weekly-review`, where `HH:MM` is the actual time you write it, not the ritual's scheduled time.
 
 If something needs the user (a status draft at L0, a proposal, stale loops, or an unanswered check-in) and you are **not** the home thread, set one proposed reply on the home thread with `threads_set_proposed_reply` (`threadId: home_thread_id`). The open-loops ritual skips this day, so fold its questions in here: any still-unanswered check-in questions from **Pending approvals**, plus up to 3 stale loops if there was no check-in this week. Leave every verdict for the user to fill in; never pre-fill consent:
 
@@ -92,6 +99,6 @@ Open loops (edit, then send):
 1. Hiring plan: 6 days quiet. Still active, blocked, or drop it? → still active (default)
 ```
 
-Omit any line that doesn't apply (e.g. no `Status update:` line at L1, no `Proposals:` line when none are due). Only open-loop status answers get defaults, as in `cos-open-loops`. If you are the home thread, ask directly instead.
+**When no proposals are due, leave the `Proposals:` line out of the proposed reply entirely.** Don't write "Proposals: none", "Proposals: none due this week" or anything similar; "None this week." belongs only in the weekly note. Likewise, leave out the `Status update:` line at L1 and the `Open loops` block when there are none. Only open-loop status answers get defaults, as in `cos-open-loops`. If you are the home thread, ask directly instead.
 
 If this is a scheduled run and nothing needs the user, archive this thread with `threads_archive` (see `cos-contract`, section 6).

@@ -20,7 +20,9 @@ The first-run experience. It runs in the persistent **Chief of Staff** thread, w
 
 ## Rules for this skill
 
-- **One question per turn.** Ask, then stop and wait. Never stack two questions in one message.
+- **One question per turn.** Each message ends with exactly one question mark. Ask, then stop and wait. Never stack a second question, even a small one in parentheses or a trailing "anything else?". Save a follow-up for its own turn.
+  - Bad: "Who matters most across those projects? (Anyone else, or is that the full cast?)"
+  - Good: "Who matters most across those projects, and how does each connect to them?" Then, next turn if needed: "Anyone else I should know about?"
 - **Warm and brief.** Two to four sentences per turn. Reflect back what you heard in a few words, then ask the next thing.
 - **Write nothing but `Setup Draft.md` until the user says "go".** Before "go", reading is fine; writing any other note, calling `CronCreate`, or importing anything is not.
 - **Keep a running import list.** Every time the user mentions a document (a PRD, a plan, a spreadsheet, a doc in Drive, a note in the vault), note its name, where it lives, and which project it belongs to. Don't fetch it yet.
@@ -59,7 +61,7 @@ Look, don't write:
 1. List the top-level folders of the vault with your file-listing tools.
 2. Find the daily-note setup: read `.obsidian/daily-notes.json` (keys `folder`, `format`, `template`) and, if present, `.obsidian/plugins/periodic-notes/data.json`. If neither exists, look for a folder of date-named notes and infer the format (e.g. `2026-09-24.md` → `YYYY-MM-DD`). Default: folder `Daily`, format `YYYY-MM-DD`.
 3. Find existing folders for **meetings**, **people** and **projects**: match names case-insensitively (e.g. `Meetings`, `Meeting Notes`, `1-1s`; `People`, `Contacts`; `Projects`, `Work`). Prefer an existing folder over creating a new one. If several candidates fit, pick the one with the most notes and mention the choice.
-4. Detect the machine's timezone (for example `Intl.DateTimeFormat().resolvedOptions().timeZone`, or the system clock's zone such as `date +%Z`). Don't ask about it as its own question; it goes into the draft for the user to confirm.
+4. Work out the user's likely timezone from what you already have: the date/time and zone in your session context, or offsets in tool results (see `cos-contract`, "Dates and times"; never run a shell command for it). Don't ask about it as its own question; it goes into the draft for the user to confirm. If nothing tells you, put "timezone: ? (tell me yours)" in the draft.
 
 Say what you found in **one line**, e.g. "Found daily notes in `Journal/Daily` (YYYY-MM-DD), meetings in `Meetings`, and people in `People`. No projects folder yet, so I'll make `Projects/`." If the vault is empty, say "Your vault is empty, so I'll set up simple folders for you." and move on.
 
@@ -87,7 +89,7 @@ Throughout, add every document the user mentions to the import list: name, locat
 
 Write `<cos_folder>/Setup Draft.md` (default `Chief of Staff/Setup Draft.md`). Start from the pack's `templates/Setup Draft.md` (two folders above this skill: `../../templates/`); if you can't read it, use this shape:
 
-- Frontmatter: `cos_version: 1`, `status: draft`, `created_at: <now, ISO-8601 with offset>`, `applied_at: ""`.
+- Frontmatter: `cos_version: 1`, `status: draft`, `created_at: <the current time, ISO-8601 with offset>`, `applied_at: ""` (filled in at "go").
 - Checkbox sections, **one line per item**, every item checked (`- [x]`) by default so the user only unchecks what they don't want:
   - **Profile**: name, role and team, timezone (the detected one, marked "detected, change if wrong"), detected folders, status-update audience and format, preferences.
   - **Projects**: `name — one-line goal — key people`.
@@ -106,11 +108,11 @@ Call `threads_get_current` again (your memory of step 1 may not survive a long c
 Re-read `Setup Draft.md` (the user may have edited it) and use only **checked** (`- [x]`) items. Then write:
 
 1. **`<cos_folder>/Profile.md`** from `templates/Profile.md`: fill `name`, `role`, `timezone` (as confirmed in the draft), `home_thread_id`, `locations` (from step 2), `sources` (`google_drive: true` only if Google Workspace tools are available and the user uses Drive; `calendar` from step 3), `status_update`. Leave `setup_completed_at` empty and rituals disabled for now. Fill the body sections: Working context, Key people (linking to people notes), Current priorities, Preferences.
-2. **`<cos_folder>/Now.md`** from `templates/Now.md`: projects under **Projects**, commitments under **Commitments**, waiting-on items under **Waiting on**, worries under **Worries**, each `— active — touched <today>` (or `waiting`/`blocked` as the user said), plus a numbered **Priorities** list in the order the user gave.
-3. **`<cos_folder>/Autonomy.md`** from `templates/Autonomy.md`: every task type at `L0`, streak 0, no outcomes.
+2. **`<cos_folder>/Now.md`** from `templates/Now.md`: projects under **Projects**, commitments under **Commitments**, waiting-on items under **Waiting on**, worries under **Worries**, each `— active — touched <today>` (or `waiting`/`blocked` as the user said), plus a numbered **Priorities** list in the order the user gave. Set `updated_at` to today (`YYYY-MM-DD`).
+3. **`<cos_folder>/Autonomy.md`** from `templates/Autonomy.md`: every task type at `L0`, streak 0, no outcomes. Set `updated_at` to today (`YYYY-MM-DD`).
 4. **Project notes** in `locations.projects`: one per checked project, `<Project name>.md`, with the goal, a **People** list linking to people notes, and an **Open loops** list linking back to `[[<cos_folder>/Now]]`. If a note with that name already exists, append a `## Chief of Staff` section instead of overwriting.
 5. **People notes** in `locations.people`: one per checked person, `<Full name>.md`, with relationship and links to their projects. Same rule for existing notes.
-6. Update `Setup Draft.md` frontmatter: `status: applied`, `applied_at: <now>`.
+6. Update `Setup Draft.md` frontmatter: `status: applied`, and `applied_at` set to the actual time the user said "go" (ISO-8601 with offset). It is always later than `created_at`; never copy `created_at` into it.
 
 Create missing folders only for what you are writing. Report what was created as a short list of links.
 
@@ -152,14 +154,14 @@ For each yes, schedule it (idempotently):
 
 For each no, leave the ritual `enabled: false` and tell them they can ask for it later.
 
-Finally set `setup_completed_at` to now (ISO-8601 with offset) in `Profile.md`, even if they declined every ritual.
+Finally set `setup_completed_at` to the current time (ISO-8601 with offset) in `Profile.md`, even if they declined every ritual.
 
 ## Step 10: close
 
-Three lines:
+Three lines. First work out the **next actual run** of the daily brief from today's weekday and the ritual's `days` and `time` (see `cos-contract`, "Dates and times"). Say "tomorrow" only when the next run really is tomorrow; otherwise name the day. For example, when setup finishes on a Friday and the brief runs Monday to Friday:
 
-> Tomorrow at 8 your brief lands in today's daily note under "Chief of Staff Brief".
+> Your next brief lands Monday at 8:00 in that day's daily note, under "Chief of Staff Brief".
 > If something goes quiet, I'll ask about it here, and your answer is one click.
 > Talk to me in this thread any time: "prep me for my 1:1", "import this doc", "what's on my plate?"
 
-(Adjust to the rituals they actually turned on.)
+(Adjust to the rituals they actually turned on. If they declined the brief, drop the first line.)
