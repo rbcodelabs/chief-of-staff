@@ -58,12 +58,12 @@ Send one paragraph, then one question:
 
 Look, don't write:
 
-1. List the top-level folders of the vault with your file-listing tools.
+1. List the top-level folders of the vault with Glob (pattern `*/`) or `vault_search`. No shell commands (see `cos-contract`, "Tools: no shell, ever").
 2. Find the daily-note setup: read `.obsidian/daily-notes.json` (keys `folder`, `format`, `template`) and, if present, `.obsidian/plugins/periodic-notes/data.json`. If neither exists, look for a folder of date-named notes and infer the format (e.g. `2026-09-24.md` → `YYYY-MM-DD`). Default: folder `Daily`, format `YYYY-MM-DD`.
 3. Find existing folders for **meetings**, **people** and **projects**: match names case-insensitively (e.g. `Meetings`, `Meeting Notes`, `1-1s`; `People`, `Contacts`; `Projects`, `Work`). Prefer an existing folder over creating a new one. If several candidates fit, pick the one with the most notes and mention the choice.
-4. Work out the user's likely timezone from what you already have: the date/time and zone in your session context, or offsets in tool results (see `cos-contract`, "Dates and times"; never run a shell command for it). Don't ask about it as its own question; it goes into the draft for the user to confirm. If nothing tells you, put "timezone: ? (tell me yours)" in the draft.
+4. **Timezone:** read it from your session context. The host may provide a line with the local time, the IANA timezone (e.g. `America/Chicago`) and the UTC offset; use that IANA name. If there's no such line, make your best guess from what the context does say (for example an offset) and mark it "best guess, please confirm" in the draft. If there's nothing to go on, write "timezone: ? (tell me yours)". Never run a command to find it, and don't ask about it as its own question; the user confirms it in the draft.
 
-Say what you found in **one line**, e.g. "Found daily notes in `Journal/Daily` (YYYY-MM-DD), meetings in `Meetings`, and people in `People`. No projects folder yet, so I'll make `Projects/`." If the vault is empty, say "Your vault is empty, so I'll set up simple folders for you." and move on.
+Say what you found in **one line**, e.g. "Found daily notes in `Journal/Daily` (YYYY-MM-DD), meetings in `Meetings`, and people in `People`. No projects folder yet, so project notes will go in `Projects/`." If the vault is empty, say "Your vault is empty, so I'll use simple folders for your notes." and move on. Don't create any folder now; folders appear when the first note is written into them.
 
 ## Step 3: calendar, if connected
 
@@ -80,8 +80,9 @@ Ask about each topic in its own turn, in this order. Follow up once if an answer
 2. **Current projects (3–6).** "What are the 3 to 6 things you're driving right now?" For each, capture a one-line goal.
 3. **Key people.** "Who matters most across those projects, and how does each person connect to them?" Capture name, relationship (manager, partner, report, stakeholder) and projects.
 4. **Open loops.** "What's on your mind: things you've promised, things you're waiting on, and anything you're worried about?"
-5. **Rituals and status updates.** "Which recurring meetings or updates do you have, and who do your status updates go to? What format do they like?" This fills `status_update.audience` and `status_update.format`.
-6. **Preferences.** "How do you like things written, and is there anything I should leave alone?"
+5. **Rituals.** "Which recurring meetings or updates do you have?"
+6. **Status updates** (its own turn). "Who do your status updates go to, and in what format do they like them?" This fills `status_update.audience` and `status_update.format`.
+7. **Preferences.** "How do you like things written, and is there anything I should leave alone?"
 
 Throughout, add every document the user mentions to the import list: name, location (Drive title or link, vault path, or "they'll paste it"), and project. Check whether Google Workspace tools are available (for example `search_files` / `read_file_content` for Drive, `read_doc` for Docs) and note it; don't fetch yet.
 
@@ -89,15 +90,17 @@ Throughout, add every document the user mentions to the import list: name, locat
 
 Write `<cos_folder>/Setup Draft.md` (default `Chief of Staff/Setup Draft.md`). Start from the pack's `templates/Setup Draft.md` (two folders above this skill: `../../templates/`); if you can't read it, use this shape:
 
-- Frontmatter: `cos_version: 1`, `status: draft`, `created_at: <the current time, ISO-8601 with offset>`, `applied_at: ""` (filled in at "go").
+- Frontmatter: `cos_version: 1`, `status: draft`, `created_at: <the current time, ISO-8601 with offset; date-only if your context has no exact time>`, `applied_at: ""` (filled in at "go").
 - Checkbox sections, **one line per item**, every item checked (`- [x]`) by default so the user only unchecks what they don't want:
-  - **Profile**: name, role and team, timezone (the detected one, marked "detected, change if wrong"), detected folders, status-update audience and format, preferences.
+  - **Profile**: name, role and team, timezone (from your context, or your best guess marked "best guess, please confirm"), detected folders, status-update audience and format, preferences.
   - **Projects**: `name — one-line goal — key people`.
   - **People**: `name — relationship — projects`.
   - **Open loops**: `what — status — commitment / waiting on / worry[, due date]`.
   - **Documents to import**: `document — where it lives — project`. Check at most **3** (the most important, in the user's order); list the rest unchecked with "(later)".
 
-Then tell the user, in two sentences: "I've put everything in [[<cos_folder>/Setup Draft]]. Edit anything, uncheck what you don't want, then say **go**." (Use the real folder in the link.)
+Write every name, project and loop exactly as the user said it (same capitalization, no added people or details; see `cos-contract`, "Keep the user's words").
+
+Then hand off with exactly one question: "I've put everything in [[<cos_folder>/Setup Draft]], so edit anything or uncheck what you don't want, then say **go**. Ready for me to set it up?" (Use the real folder in the link.)
 
 Wait. If the user asks for changes in chat, update the draft and wait again.
 
@@ -112,9 +115,9 @@ Re-read `Setup Draft.md` (the user may have edited it) and use only **checked** 
 3. **`<cos_folder>/Autonomy.md`** from `templates/Autonomy.md`: every task type at `L0`, streak 0, no outcomes. Set `updated_at` to today (`YYYY-MM-DD`).
 4. **Project notes** in `locations.projects`: one per checked project, `<Project name>.md`, with the goal, a **People** list linking to people notes, and an **Open loops** list linking back to `[[<cos_folder>/Now]]`. If a note with that name already exists, append a `## Chief of Staff` section instead of overwriting.
 5. **People notes** in `locations.people`: one per checked person, `<Full name>.md`, with relationship and links to their projects. Same rule for existing notes.
-6. Update `Setup Draft.md` frontmatter: `status: applied`, and `applied_at` set to the actual time the user said "go" (ISO-8601 with offset). It is always later than `created_at`; never copy `created_at` into it.
+6. Update `Setup Draft.md` frontmatter: `status: applied`, and `applied_at` set to the actual time the user said "go" (ISO-8601 with offset, or date-only if your context has no exact time). It is never earlier than `created_at`; never copy `created_at` into it.
 
-Create missing folders only for what you are writing. Report what was created as a short list of links.
+Use Write for every note. A folder is created implicitly when its first note is written, so never create an empty folder (for example, no `Meetings/` until a meeting note exists). Report what was created as a short list of links.
 
 ## Step 7: targeted import
 
@@ -122,7 +125,7 @@ For each **checked** item under **Documents to import** (at most 3), run `cos-im
 
 ## Step 8: first brief, now
 
-Run `cos-daily-brief` immediately so the user sees one on day 1. Tell them where it went (a link to today's daily note).
+Run `cos-daily-brief` immediately so the user sees one on day 1. Tell them where it went (a link to today's daily note). The first brief must flag every loop whose `due` date is today as "due today" (and only earlier dates as "overdue").
 
 ## Step 9: offer the rituals
 

@@ -79,7 +79,16 @@ Structural tests (Node's built-in test runner, no dependencies) check skill fron
 
 ## Changelog
 
-### 0.1.1
+### 0.1.2
+
+Fixes from a second live QA pass in Agent Threads:
+
+- **No shell at all.** Shell commands were previously banned only for dates. Now the model uses Glob, Read, Write and the vault tools (`vault_search` and others) for listing, reading and creating files. Folders are created implicitly when the first note is written, and empty folders are never created.
+- **Timezone from session context.** Setup reads the IANA timezone from the session context. If it isn't there, setup asks the user to confirm a best guess in the draft, and never runs a command to find it.
+- **No fabricated times.** When the exact time isn't known, timestamps are date-only, and headings leave the time out.
+- **One question per message in setup.** Status updates are now their own interview turn, and the draft hand-off ends with exactly one question.
+- **Weekly review proposed reply** adds no note about missing proposals or check-ins.
+- **The user's words are kept exactly**: capitalization, names, and no invented parties. Dates are compared exactly, so "due today" is never "overdue", and the first brief flags items due today.
 
 Fixes found in a live first-run QA in Agent Threads:
 

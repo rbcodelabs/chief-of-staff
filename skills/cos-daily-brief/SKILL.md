@@ -34,7 +34,9 @@ For each **Activity log** line in `Autonomy.md` at L1 with `outcome: pending` an
 
 **Top 3 priorities.** The first three items of **Priorities** in `Now.md`. If fewer than three exist, show what's there; if none, say "No priorities set; want to pick some?"
 
-**Stale loops.** Every unchecked loop line in `Now.md` whose `touched` date is more than `rituals.open_loops_check.stale_after_days` days before today (default 5 if absent). Show up to five, oldest first, with days since touched. Also flag loops with a `due` date today or already past.
+**Stale loops.** Every unchecked loop line in `Now.md` whose `touched` date is more than `rituals.open_loops_check.stale_after_days` days before today (default 5 if absent). Show up to five, oldest first, with days since touched.
+
+**Due dates.** Compare each open loop's `due` date with today exactly (see `cos-contract`, "Dates and times"). Flag every loop due today as "due today", including in the very first brief after setup. Flag only loops whose `due` date is before today as "overdue". A loop due today is never "overdue".
 
 **Done on my own.** **Activity log** lines at L1 dated after the last brief (L2 items are reported in the weekly review), with their settled outcomes.
 
@@ -44,7 +46,7 @@ For each **Activity log** line in `Autonomy.md` at L1 with `outcome: pending` an
 
 ## Step 3: write
 
-Create today's daily note if it's missing: if `.obsidian/daily-notes.json` names a `template`, start from that template's contents; otherwise create an empty note. Create the folder path if the format implies sub-folders.
+Create today's daily note if it's missing: if `.obsidian/daily-notes.json` names a `template`, start from that template's contents; otherwise create an empty note. Write it with the Write tool; any folders in the path (including sub-folders the format implies) are created implicitly. No shell commands.
 
 Append (don't overwrite existing content). If a `## Chief of Staff Brief` section already exists today (for example the brief was re-run), add a `### Update HH:MM` subsection at the end of it instead of a second `## Chief of Staff Brief` heading.
 
@@ -60,9 +62,12 @@ Append (don't overwrite existing content). If a `## Chief of Staff Brief` sectio
 2. ...
 3. ...
 
+**Due**
+- Send the Q4 hiring plan to Sam — due today
+- Vendor contract — overdue (due 2026-09-24)
+
 **Gone quiet**
 - Hiring plan — 6 days since touched
-- Vendor contract — due yesterday
 
 **Done on my own since <last brief date>**
 - ... — [[link]]
