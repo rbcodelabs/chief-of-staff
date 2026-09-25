@@ -40,7 +40,7 @@ Only report what you found. If a source was empty or unreadable, say so in one l
 
 ## Step 3: write the review
 
-Path: `<cos_folder>/Weekly/YYYY-Www.md`. If it already exists (re-run), replace only the sections below and keep anything the user added.
+Path: `<cos_folder>/Weekly/YYYY-Www.md`. If it doesn't exist, create it with Write. If it already exists (re-run), change only the sections below with Edit, one section at a time, and keep anything the user added. Never rewrite an existing weekly note with a whole-file Write.
 
 ```
 # Week YYYY-Www
@@ -70,7 +70,7 @@ The weekly note is this task's review surface, so write it at any level. Cleanup
 
 ## Step 4: draft the status update
 
-Write it for `status_update.audience` in `status_update.format` from the profile (e.g. "bullets: shipped / in progress / risks / asks"). Draw only on what the window's notes show.
+Write it for `status_update.audience` in `status_update.format` from the profile (use the profile's wording as the structure; don't substitute a format of your own). Draw only on what the window's notes show.
 
 **Each status line restates only what `Now.md` or a note records.** Don't infer a state that isn't written down (not started, on track, delayed, blocked). For a waiting-on item or any loop with no newer record, write "waiting on <X> (no update since <touched date>)".
 
@@ -97,7 +97,7 @@ Run the promotion and demotion checks from `cos-autonomy` for every task type. L
 
 ## Step 6: report
 
-Post the contract's "What I did / What needs you" summary with a link to the weekly note. Add a one-line pointer to the weekly note in today's daily note under `## Chief of Staff Updates` as `### HH:MM cos-weekly-review`, where `HH:MM` is the actual time you write it, not the ritual's scheduled time (or `### cos-weekly-review` if you don't know the time). Add it at the **end** of the daily note as `cos-contract` §5 describes. If `## Chief of Staff Updates` exists, append to the end of that section; otherwise append the heading and entry after everything else in the note. Never insert it inside or above the `## Chief of Staff Brief` section or its `### Update HH:MM` subsections. The `Weekly/` folder is created implicitly by writing the note; never create it separately.
+Post the contract's "What I did / What needs you" summary with a link to the weekly note. Add a one-line pointer to the weekly note in today's daily note under `## Chief of Staff Updates` as `### HH:MM cos-weekly-review`, where `HH:MM` is the actual time you write it, not the ritual's scheduled time (or `### cos-weekly-review` if you don't know the time). Add it at the **end** of the daily note with an Edit-based append, as `cos-contract` §5 describes; never rewrite the daily note with a whole-file Write. If `## Chief of Staff Updates` exists, append to the end of that section; otherwise append the heading and entry after everything else in the note. Never insert it inside or above the `## Chief of Staff Brief` section or its `### Update HH:MM` subsections. The `Weekly/` folder is created implicitly by writing the note; never create it separately.
 
 If something needs the user (a status draft at L0, a proposal, stale loops, or an unanswered check-in) and you are **not** the home thread, set one proposed reply on the home thread with `threads_set_proposed_reply` (`threadId: home_thread_id`). The open-loops ritual skips this day, so fold its questions in here: any still-unanswered check-in questions from **Pending approvals**, plus up to 3 stale loops if there was no check-in this week. Leave every verdict for the user to fill in; never pre-fill consent:
 

@@ -66,7 +66,7 @@ Deliver it:
 
 - **Scheduled / other thread:** `threads_set_proposed_reply` with `threadId: home_thread_id` and the text above. It cannot target the current thread, which is why the home thread id is stored in the profile.
 - **You are the home thread:** ask the same questions directly in the conversation instead.
-- **Home thread unreachable** (empty id, call fails): report "I couldn't reach the Chief of Staff thread", add the questions to today's daily note as `### HH:MM Check-in` under `## Chief of Staff Updates`, and stop. That section always goes at the end of the note, after the whole brief; see `cos-contract` §5.
+- **Home thread unreachable** (empty id, call fails): report "I couldn't reach the Chief of Staff thread", add the questions to today's daily note as `### HH:MM Check-in` under `## Chief of Staff Updates`, and stop. That section always goes at the end of the note, after the whole brief, and is added with an Edit-based append, never a whole-file Write; see `cos-contract` §5.
 
 Record the check-in under **Pending approvals** in `Autonomy.md`: `- YYYY-MM-DD open_loops_update — check-in: <loop names> — awaiting`.
 

@@ -1,8 +1,8 @@
 ---
 cos_version: 1
-name: ""
-role: ""
-timezone: ""
+name: "<the user's name from the draft>"
+role: "<the user's role and team, in their words>"
+timezone: "<IANA timezone confirmed in the draft>"
 home_thread_id: ""
 setup_completed_at: ""
 locations:
@@ -19,8 +19,8 @@ sources:
   google_drive: false
   calendar: "none"
 status_update:
-  audience: ""
-  format: "bullets: shipped / in progress / risks / asks"
+  audience: "<who the user said status updates go to, in their words>"
+  format: "<the user's words from the draft for the update format>"
 ---
 
 # Chief of Staff Profile

@@ -79,6 +79,14 @@ Structural tests (Node's built-in test runner, no dependencies) check skill fron
 
 ## Changelog
 
+### 0.1.5
+
+Fixes from a fifth live QA pass, which passed all checks with Bash removed:
+
+- **Profile template placeholders.** User-specific fields (`name`, `role`, `timezone`, status-update `audience` and `format`) are now `<…>` placeholders instead of example values. The model had kept the example format rather than the user's "short bullets". Setup replaces every placeholder with the user's own words from the approved draft, or leaves it empty. The fictional example now lives only in `docs/profile-schema.md`.
+- **Existing notes are changed with Edit, never a whole-file Write.** This covers daily notes, the user's own notes and the pack's files. Appends anchor on the note's last lines. Write only creates notes that don't exist yet.
+- **Glob as a listing fallback.** `vault_list` stays first. When it's unavailable, Glob is acceptable for listing. Still no shell, ever.
+
 ### 0.1.4
 
 Fixes from a fourth live QA pass. The host now removes Bash from Chief of Staff threads, so the pack must never need it.
