@@ -218,12 +218,68 @@ test("autonomy task types agree between cos-autonomy and templates/Autonomy.md",
   }
 });
 
-test("status_update_draft is capped at L1 and every other task type at L2", () => {
+test("max levels: daily_brief L0, status_update_draft L1, every other task type L2", () => {
   const skill = read("skills/cos-autonomy/SKILL.md");
+  const expectedMax: Record<string, string> = { daily_brief: "L0", status_update_draft: "L1" };
   for (const type of EXPECTED_TASK_TYPES) {
     const row = new RegExp(`^\\| \`${type}\` \\|.*\\| (L[0-2]) \\|$`, "m").exec(skill);
     assert.ok(row, `no task-type row for ${type}`);
-    assert.equal(row[1], type === "status_update_draft" ? "L1" : "L2");
+    assert.equal(row[1], expectedMax[type] ?? "L2", `max level for ${type}`);
+  }
+});
+
+test("templates/Setup Draft.md items all start checked", () => {
+  const draft = read("templates/Setup Draft.md");
+  assert.doesNotMatch(draft, /- \[ \]/, "Setup Draft items must default to checked (- [x])");
+  assert.match(draft, /- \[x\]/);
+});
+
+test("L1/L2 activity is logged pending and settled by the brief and weekly review", () => {
+  assert.match(read("skills/cos-autonomy/SKILL.md"), /## Settle activity outcomes/);
+  assert.match(read("templates/Autonomy.md"), /outcome: pending/);
+  assert.match(read("docs/profile-schema.md"), /outcome: <pending\|approved\|approved-with-edits\|rejected\|skipped>/);
+  assert.match(read("skills/cos-daily-brief/SKILL.md"), /Settle activity outcomes/);
+  assert.match(read("skills/cos-weekly-review/SKILL.md"), /Settle activity outcomes/);
+});
+
+test("proposed replies never pre-fill consent", () => {
+  for (const id of ["cos-weekly-review", "cos-open-loops"]) {
+    const body = read(join("skills", id, "SKILL.md"));
+    assert.doesNotMatch(body, /Proposals:\s*(?:yes|no)\b/i, `${id} pre-fills a proposal answer`);
+    assert.doesNotMatch(body, /Status update:\s*looks good/i, `${id} pre-fills the status-update verdict`);
+    assert.doesNotMatch(body, /→\s*(?:\*\*)?yes\b/i, `${id} pre-fills a yes`);
+  }
+  const weekly = read("skills/cos-weekly-review/SKILL.md");
+  assert.ok(weekly.includes("Proposals: <answer each: yes / no>"));
+  assert.ok(weekly.includes("Status update: <looks good / change …>"));
+});
+
+test("every skill starts from the contract and repeats the hard limit", () => {
+  const hardLimit =
+    "> **Hard limit:** never send, share, post, invite or delete anything outside the vault. Anything meant for another person is a draft for the user.";
+  for (const id of EXPECTED_SKILLS) {
+    const body = read(join("skills", id, "SKILL.md"));
+    const heading = body.indexOf("\n# ");
+    assert.ok(heading !== -1 && body.indexOf(hardLimit) > heading, `${id} must state the hard limit`);
+    assert.ok(body.indexOf(hardLimit) < body.indexOf("\n## "), `${id} must state the hard limit before its first section`);
+    if (id !== "cos-contract") {
+      assert.ok(body.includes("Invoke the `cos-contract` skill"), `${id} must invoke cos-contract first`);
+    }
+  }
+});
+
+test("cos-setup's CronCreate table uses valid scheduleType and daysOfWeek", () => {
+  const setup = read("skills/cos-setup/SKILL.md");
+  const rows = [...setup.matchAll(/^\| [^|]+ \| `(Chief of Staff — [^`]+)` \| `([^`]+)` \| `\[([^\]]*)\]` \| `([^`]+)` \|$/gm)];
+  assert.equal(rows.length, 3, "expected three ritual rows");
+  for (const [, name, scheduleType, days, time] of rows) {
+    assert.ok(["interval", "daily", "weekly"].includes(scheduleType), `${name}: bad scheduleType ${scheduleType}`);
+    const values = days.split(",").map((d) => Number(d.trim()));
+    assert.ok(values.length > 0, `${name}: empty daysOfWeek`);
+    for (const day of values) {
+      assert.ok(Number.isInteger(day) && day >= 0 && day <= 6, `${name}: day ${day} out of 0–6`);
+    }
+    assert.match(time, /^([01]\d|2[0-3]):[0-5]\d$/, `${name}: bad timeOfDay`);
   }
 });
 

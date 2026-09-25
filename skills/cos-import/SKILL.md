@@ -12,9 +12,14 @@ description: >-
 
 # Chief of Staff import
 
+> **Hard limit:** never send, share, post, invite or delete anything outside the vault. Anything meant for another person is a draft for the user.
+
 Turn one document into a short, linked extract in the right project note.
 
-Follow `cos-contract` throughout. Read `Chief of Staff/Profile.md` first (see the contract for finding a moved profile); stop and offer `cos-setup` if it's missing.
+## Step 0: contract and profile
+
+1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout.
+2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile); stop and offer `cos-setup` if it's missing.
 
 ## Input
 
@@ -29,7 +34,7 @@ Pick the path by reference type:
 
 | Reference | How to fetch |
 |---|---|
-| Drive or Docs link / title | Only if `sources.google_drive` is `true` **and** Google Workspace tools are available: find it (e.g. `search_files` by title, or `get_file_metadata` for a link), then read it (`read_doc` for Google Docs, `read_file_content` for other Drive files). Read-only. |
+| Drive or Docs link / title | Only if `sources.google_drive` is `true` **and** Google Workspace tools are available: find it (e.g. `search_files` by title, or `get_file_metadata` for a link), then read it with the matching reader: `read_doc` for Google Docs, `get_values` (after `get_spreadsheet` to list the sheets) for Google Sheets, `read_presentation` for Google Slides, `read_file_content` for other Drive files. Read-only. |
 | Vault path | Read the note with your file tools. |
 | Pasted text | Use it as given. |
 
@@ -74,7 +79,7 @@ Source: <Drive link, vault [[link]], or "pasted by you on YYYY-MM-DD">
 
 If the extract is longer than about 20 lines, or the user asked for a separate note, create `<locations.projects>/<Project> — <Document title>.md` with the same content and add a one-line link to it from the project note instead.
 
-If the document raises new open loops (a commitment, a dated deliverable, an unanswered question the user owns), propose adding them to `Now.md`; add them directly only if `open_loops_update` is L1 or higher (see `cos-autonomy`).
+If the document raises new open loops (a commitment, a dated deliverable, an unanswered question the user owns), propose adding them to `Now.md`; add them directly only if `open_loops_update` is L1 or higher (see `cos-autonomy`), logging each in the Activity log with `outcome: pending`. An import you filed on your own initiative at L1+ (`note_filing`) is logged the same way.
 
 ## Step 4: report (3 lines)
 

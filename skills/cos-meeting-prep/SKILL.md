@@ -12,12 +12,15 @@ description: >-
 
 # Chief of Staff meeting prep
 
-Follow `cos-contract` throughout. Autonomy task types: `meeting_prep` (the prep note) and `action_items` (the follow-up pass).
+> **Hard limit:** never send, share, post, invite or delete anything outside the vault. Anything meant for another person is a draft for the user.
 
-## Step 1: read
+Autonomy task types: `meeting_prep` (the prep note) and `action_items` (the follow-up pass).
 
-1. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). Stop and offer `cos-setup` if it's missing.
-2. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`; note the levels for `meeting_prep` and `action_items`.
+## Step 1: contract and profile
+
+1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout.
+2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). Stop and offer `cos-setup` if it's missing.
+3. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`; note the levels for `meeting_prep` and `action_items`.
 
 ## Step 2: identify the meeting
 
@@ -66,8 +69,10 @@ Date: YYYY-MM-DD HH:MM · Attendees: [[People/Priya Shah]], [[People/Sam Rivera]
 Write it according to the `meeting_prep` level:
 
 - **L0:** show the prep in the thread and ask "Want me to save this to [[<path>]]?" Add a **Pending approvals** line in `Autonomy.md`. On the user's verdict, record the outcome (see `cos-autonomy`) and save (with their edits) or discard.
-- **L1:** write the note, log it in the Activity log, and report with a link.
-- **L2:** write the note and log it; mention it only in the weekly review.
+- **L1:** write the note, log it in the Activity log with `outcome: pending`, and report with a link.
+- **L2:** write the note and log it the same way; mention it only in the weekly review.
+
+At L1/L2 the outcome is settled later from whether the user kept, edited or reverted the prep (see `cos-autonomy`, "Settle activity outcomes").
 
 If a note for this meeting already exists, add or refresh the `## Prep` section only; never touch the user's own notes in it.
 
@@ -75,15 +80,15 @@ Agendas and questions are for the user. If they want to send an agenda to attend
 
 ## Step 5: after the meeting (action items)
 
-When the user says the meeting is done, or asks to pull action items (or when the next brief notices a meeting note with content under **Notes** or **Action items** that hasn't been processed), offer the pass: "Want me to pull the action items from [[<meeting note>]]?"
+When the user says the meeting is done, or asks to pull action items (or replies "action items <meeting>" to the daily brief, which lists meeting notes with content under **Notes** or **Action items** and no `Processed into loops on` line), offer the pass: "Want me to pull the action items from [[<meeting note>]]?"
 
 On yes, read the meeting note and extract action items: owner, what, due date if stated.
 
 - **The user's own items** → new loop lines in `Now.md` under **Commitments** (`— active — touched <today>[ — due D] — [[meeting note]]`).
 - **Items others owe the user** → `Now.md` **Waiting on**, and a line under `## Open items` in that person's note.
-- Mark the meeting note's action items with the loops they became.
+- Mark the meeting note's action items with the loops they became, and add the line `Processed into loops on YYYY-MM-DD.` at the end of its `## Action items` section so the brief stops offering it.
 
-Apply according to the `action_items` level: at L0 list the proposed changes in the thread and wait (Pending approvals line, record outcome on the verdict); at L1 apply and report with links; at L2 apply and log for the weekly review.
+Apply according to the `action_items` level: at L0 list the proposed changes in the thread and wait (Pending approvals line, record outcome on the verdict); at L1 apply, log in the Activity log with `outcome: pending`, and report with links; at L2 apply and log the same way for the weekly review. If the user says no to the pass, still add `Processed into loops on YYYY-MM-DD (skipped).` so it isn't offered again.
 
 Follow-up emails or messages to attendees are drafts in the thread, never sent.
 

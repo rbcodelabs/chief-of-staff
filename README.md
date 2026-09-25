@@ -35,7 +35,7 @@ After that, talk to it in the Chief of Staff thread: "prep me for my 1:1", "impo
 
 ## Autonomy, briefly
 
-Every task type starts at **L0 (draft and wait)**. After ten approvals in a row (with at most two small edits) it asks whether it can move to **L1 (act and report)**, and later **L2 (act and batch into the weekly review)**. A rejection proposes dropping back. Only your yes changes a level. Sending, sharing, posting, inviting or deleting anything outside the vault is never allowed at any level.
+Every task type starts at **L0 (draft and wait)**. After ten approvals in a row (with at most two small edits) it asks whether it can move to **L1 (act and report)**, and later **L2 (act and batch into the weekly review)**. At L1 and L2, anything you keep counts as an approval, anything you edit counts as approved with edits, and anything you revert counts as a rejection, which prompts it to propose dropping back a level. Only your yes changes a level. The daily brief only writes its own section, so it stays at L0. Sending, sharing, posting, inviting or deleting anything outside the vault is never allowed at any level.
 
 ## Install
 

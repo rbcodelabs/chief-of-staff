@@ -4,22 +4,29 @@ description: >-
   Write the Chief of Staff daily brief into today's daily note under
   "## Chief of Staff Brief": today's meetings (only if a calendar tool is
   connected), top 3 priorities, stale open loops, what the chief of staff did
-  on its own since the last brief, and a closing question. Use when the
-  scheduled "Chief of Staff — Daily Brief" ritual fires, at the end of
-  cos-setup, or when the user asks "what's on my plate", "brief me", "morning
-  brief" or "what should I focus on today".
+  on its own since the last brief, meeting notes ready for an action-items
+  pass, and a closing question. Use when the scheduled "Chief of Staff — Daily
+  Brief" ritual fires, at the end of cos-setup, or when the user asks "what's
+  on my plate", "brief me", "morning brief" or "what should I focus on today".
 ---
 
 # Chief of Staff daily brief
 
-Follow `cos-contract` throughout. Autonomy task type: `daily_brief`.
+> **Hard limit:** never send, share, post, invite or delete anything outside the vault. Anything meant for another person is a draft for the user.
 
-## Step 1: read
+Autonomy task type: `daily_brief`. The brief only writes its own section of the daily note, so it runs the same at every level and is never promoted (see `cos-autonomy`).
 
-1. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). If it's missing, stop and offer `cos-setup`.
-2. Compute today's date in the profile's `timezone`.
-3. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`.
-4. Find today's daily note: `<locations.daily_notes.folder>/<today formatted with locations.daily_notes.format>.md`. Also find the most recent earlier daily note that contains a `## Chief of Staff Brief` section; its date is the "last brief" date (if none, use yesterday).
+## Step 0: contract and profile
+
+1. Invoke the `cos-contract` skill (if it isn't already loaded) and follow it throughout.
+2. Read `Chief of Staff/Profile.md` (see the contract for finding a moved profile). If it's missing, stop and offer `cos-setup`.
+3. Compute today's date in the profile's `timezone`.
+4. Read `<cos_folder>/Now.md` and `<cos_folder>/Autonomy.md`.
+5. Find today's daily note: `<locations.daily_notes.folder>/<today formatted with locations.daily_notes.format>.md`. Find the most recent earlier daily note that contains a `## Chief of Staff Brief` heading; its date is the "last brief" date (if none, use yesterday). Only this skill writes that heading, so other skills' reports (under `## Chief of Staff Updates`) never count as a brief.
+
+## Step 1: settle yesterday's L1 activity
+
+For each **Activity log** line in `Autonomy.md` at L1 with `outcome: pending` and a date before today, settle it as described in `cos-autonomy` ("Settle activity outcomes"): compare the linked note with what the entry says you wrote, record `approved`, `approved-with-edits`, `rejected` or `skipped`, and update the ledger. Note any promotion or demotion proposal that becomes due.
 
 ## Step 2: gather
 
@@ -29,13 +36,17 @@ Follow `cos-contract` throughout. Autonomy task type: `daily_brief`.
 
 **Stale loops.** Every unchecked loop line in `Now.md` whose `touched` date is more than `rituals.open_loops_check.stale_after_days` days before today (default 5 if absent). Show up to five, oldest first, with days since touched. Also flag loops with a `due` date today or already past.
 
-**Done on my own.** Lines in the **Activity log** of `Autonomy.md` dated after the last brief. Include only L1 items (L2 items are reported in the weekly review). Also list anything waiting in **Pending approvals**.
+**Done on my own.** **Activity log** lines at L1 dated after the last brief (L2 items are reported in the weekly review), with their settled outcomes.
+
+**Waiting for you.** Everything under **Pending approvals**, plus any promotion or demotion proposal that became due in step 1 (as a question, never pre-answered).
+
+**Meeting notes ready for action items.** Meeting notes in `locations.meetings` dated since the last brief that have content under `## Notes` or `## Action items` and no `Processed into loops on` line. Offer each one: "reply 'action items <meeting>'" (the pass itself is in `cos-meeting-prep`, step 5).
 
 ## Step 3: write
 
 Create today's daily note if it's missing: if `.obsidian/daily-notes.json` names a `template`, start from that template's contents; otherwise create an empty note. Create the folder path if the format implies sub-folders.
 
-Append (don't overwrite existing content). If a `## Chief of Staff Brief` section already exists today, add a new `### Update HH:MM` under it instead of a second section.
+Append (don't overwrite existing content). If a `## Chief of Staff Brief` section already exists today (for example the brief was re-run), add a `### Update HH:MM` subsection at the end of it instead of a second `## Chief of Staff Brief` heading.
 
 ```
 ## Chief of Staff Brief
@@ -57,14 +68,15 @@ Append (don't overwrite existing content). If a `## Chief of Staff Brief` sectio
 - ... — [[link]]
 **Waiting for you**
 - Meeting prep for roadmap review — [[link]]
+- Action items from [[Meetings/2026-09-25 Pricing sync]]: reply "action items pricing sync"
 
 What can I take off your plate today? Reply in our Chief of Staff thread.
 ```
 
 Leave out any section that has nothing in it, except the closing line, which always appears. (The example names are fictional.)
 
-The brief section itself is the review surface for this task, so write it at any autonomy level. Anything beyond the brief (for example marking a loop touched because today's notes show progress) is an `open_loops_update` and follows that task type's level: at L0, mention it under **Waiting for you** instead of changing `Now.md`.
+The brief never edits `Now.md` or other notes. If today's notes suggest a loop moved, list it under **Waiting for you** for `cos-open-loops` to handle.
 
 ## Step 4: report
 
-In the thread, post the contract's "What I did / What needs you" summary with a link to the daily note. If this run is in a scheduled thread and something needs the user, don't set a proposed reply for the brief itself; the closing line in the note is enough.
+In the thread, post the contract's "What I did / What needs you" summary with a link to the daily note. Don't set a proposed reply for the brief; the closing line in the note is enough. If this is a scheduled run and nothing needs the user, archive this thread with `threads_archive` (see `cos-contract`, section 6).

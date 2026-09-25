@@ -94,7 +94,13 @@ Body: one `## <task_type>` section per task type, each holding a one-row table:
 - `streak` is the count of consecutive `approved` / `approved-with-edits` outcomes since the last `rejected` outcome or level change.
 - `last 10 outcomes` is a comma-separated list, oldest first, of `approved`, `approved-with-edits`, `rejected`, or `—` when empty.
 
-Followed by three shared sections: **Pending approvals** (drafts waiting for the user), **Activity log** (vault changes the pack made on its own), and **Change log** (level changes and why).
+`daily_brief` has a max level of L0: the brief only writes its own section, so it has nothing to promote and records no outcomes. `status_update_draft` has a max of L1; every other task type, L2.
+
+Followed by three shared sections:
+
+- **Pending approvals**: L0 drafts waiting for the user, `- YYYY-MM-DD <task_type> — <what> — [[link]] — awaiting`. Removed once the user answers and the outcome is recorded.
+- **Activity log**: vault changes the pack made on its own at L1 or L2, `- YYYY-MM-DD <task_type> (L1|L2) — <what> — [[link]] — outcome: <pending|approved|approved-with-edits|rejected|skipped>`. Entries start `pending`. The next daily brief settles L1 entries and the next weekly review settles L2 entries: a change kept as written is `approved`, one the user edited is `approved-with-edits`, and one the user reverted (or called wrong) is `rejected`. `skipped` means the outcome couldn't be told and isn't counted. A user reaction in a thread settles an entry immediately.
+- **Change log**: level changes and why.
 
 ## `Setup Draft.md`
 
@@ -107,8 +113,15 @@ created_at: 2026-09-25T09:30:00-05:00
 applied_at: ""                 # set when the user says "go"
 ```
 
-Body: checkbox sections **Profile**, **Projects**, **People**, **Open loops** and **Documents to import**. Each item is one line. Unchecked items are skipped when the draft is applied.
+Body: checkbox sections **Profile**, **Projects**, **People**, **Open loops** and **Documents to import**. Each item is one line and starts checked (`- [x]`); the user unchecks what they don't want. Only checked items are applied on "go". At most 3 documents are checked for import during setup; the rest are listed unchecked with "(later)".
+
+## Daily note sections
+
+- `## Chief of Staff Brief`: written only by `cos-daily-brief`. A re-run on the same day adds `### Update HH:MM` under it. The most recent daily note with this heading marks the "last brief".
+- `## Chief of Staff Updates`: reports from every other skill, each as `### HH:MM <skill>`.
+
+Meeting notes whose action items have been processed end their `## Action items` section with `Processed into loops on YYYY-MM-DD.`
 
 ## `Weekly/YYYY-Www.md`
 
-Friday reviews, named by ISO week (e.g. `Weekly/2026-W39.md`). Written by `cos-weekly-review`; no frontmatter is required. Sections: **What moved**, **What slipped**, **What's next**, **Done on my own**, **Status update (draft)**, **Autonomy proposals**.
+Friday reviews, named by ISO week (e.g. `Weekly/2026-W39.md`). Written by `cos-weekly-review`; no frontmatter is required. Each covers the window since the previous review (or the last 7 days for the first one). Sections: **What moved**, **What slipped**, **What's next**, **Done on my own**, **Status update (draft)**, **Autonomy proposals**.

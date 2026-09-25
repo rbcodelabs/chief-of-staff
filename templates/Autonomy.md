@@ -11,7 +11,7 @@ How much your chief of staff does on its own, per task type. Everything starts a
 - **L1 act and report**: makes vault-only changes and reports them with links.
 - **L2 act and batch**: makes vault-only changes and reports them in the weekly review.
 
-Anything that would reach another person is always a draft, whatever the level. Only your "yes" changes a level; ask any time to change one.
+Anything that would reach another person is always a draft, whatever the level. Only your "yes" changes a level; ask any time to change one. The daily brief only writes its own section, so it stays at L0.
 
 ## daily_brief
 
@@ -63,8 +63,8 @@ Anything that would reach another person is always a draft, whatever the level. 
 
 ## Activity log
 
-<!-- Vault changes made without asking (L1/L2). e.g.
-- 2026-09-26 open_loops_update (L1) — marked "Draft launch FAQ" done — [[Chief of Staff/Now]]
+<!-- Vault changes made without asking (L1/L2). Each starts as "outcome: pending" and is settled by the next brief (L1) or weekly review (L2): kept as written = approved, edited by you = approved-with-edits, reverted or "that was wrong" = rejected. e.g.
+- 2026-09-26 open_loops_update (L1) — marked "Draft launch FAQ" done — [[Chief of Staff/Now]] — outcome: pending
 -->
 
 ## Change log
