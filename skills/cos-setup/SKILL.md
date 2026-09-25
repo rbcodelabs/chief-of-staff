@@ -110,6 +110,8 @@ Call `threads_get_current` again (your memory of step 1 may not survive a long c
 
 Re-read `Setup Draft.md` (the user may have edited it) and use only **checked** (`- [x]`) items. Then write the notes below. Start each pack file from its template in "Embedded templates" at the end of this skill; those blocks are complete, so never list or read the pack's own folders.
 
+**Replace every `<…>` placeholder with the user's own words from the approved draft**, or with `""` if the user never gave that detail. Never leave a placeholder in a note, and never substitute an example or a default of your own. For instance, if the user said their updates are "short bullets", the profile says `format: "short bullets"`.
+
 1. **`<cos_folder>/Profile.md`** from the Profile template: fill `name`, `role`, `timezone` (as confirmed in the draft), `home_thread_id`, `locations` (from step 2), `sources` (`google_drive: true` only if Google Workspace tools are available and the user uses Drive; `calendar` from step 3), `status_update`. Leave `setup_completed_at` empty and rituals disabled for now. Fill the body sections: Working context, Key people (linking to people notes), Current priorities, Preferences.
 2. **`<cos_folder>/Now.md`** from the Now template: projects under **Projects**, commitments under **Commitments**, waiting-on items under **Waiting on**, worries under **Worries**, each `— active — touched <today>` (or `waiting`/`blocked` as the user said), plus a numbered **Priorities** list in the order the user gave. Set `updated_at` to today (`YYYY-MM-DD`).
 3. **`<cos_folder>/Autonomy.md`** from the Autonomy template: every task type at `L0`, streak 0, no outcomes. Set `updated_at` to today (`YYYY-MM-DD`).
@@ -117,7 +119,7 @@ Re-read `Setup Draft.md` (the user may have edited it) and use only **checked** 
 5. **People notes** in `locations.people`: one per checked person, `<Full name>.md`, with relationship and links to their projects. Same rule for existing notes.
 6. Update `Setup Draft.md` frontmatter: `status: applied`, and `applied_at` set to the actual time the user said "go" (ISO-8601 with offset, or date-only if your context has no exact time). It is never earlier than `created_at`; never copy `created_at` into it.
 
-Use Write for every note. A folder is created implicitly when its first note is written, so never create an empty folder (for example, no `Meetings/` until a meeting note exists). Report what was created as a short list of links.
+Use Write only to create a note that doesn't exist yet. For an existing note (for example a project or person note already in the vault, or the Setup Draft), use Edit to append or change a section; never rewrite it with a whole-file Write (see `cos-contract`, "Editing existing notes"). A folder is created implicitly when its first note is written, so never create an empty folder (for example, no `Meetings/` until a meeting note exists). Report what was created as a short list of links.
 
 ## Step 7: targeted import
 
@@ -173,7 +175,7 @@ Every line is a complete sentence that stands on its own. Never write a lead-in 
 
 ## Embedded templates
 
-These are exact copies of the pack's template files, included here so setup never has to find them on disk. Copy a block's contents (without the fence), fill in the values, and write it with Write.
+These are exact copies of the pack's template files, included here so setup never has to find them on disk. Copy a block's contents (without the fence), replace every `<…>` placeholder with the user's own words (or `""`), and create the note with Write.
 
 ### Setup Draft template (`Setup Draft.md`)
 
@@ -230,9 +232,9 @@ Here is what I understood. Everything is checked; edit anything, uncheck what yo
 ````markdown
 ---
 cos_version: 1
-name: ""
-role: ""
-timezone: ""
+name: "<the user's name from the draft>"
+role: "<the user's role and team, in their words>"
+timezone: "<IANA timezone confirmed in the draft>"
 home_thread_id: ""
 setup_completed_at: ""
 locations:
@@ -249,8 +251,8 @@ sources:
   google_drive: false
   calendar: "none"
 status_update:
-  audience: ""
-  format: "bullets: shipped / in progress / risks / asks"
+  audience: "<who the user said status updates go to, in their words>"
+  format: "<the user's words from the draft for the update format>"
 ---
 
 # Chief of Staff Profile

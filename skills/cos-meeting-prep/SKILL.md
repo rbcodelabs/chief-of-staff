@@ -74,7 +74,7 @@ Write it according to the `meeting_prep` level:
 
 At L1/L2 the outcome is settled later from whether the user kept, edited or reverted the prep (see `cos-autonomy`, "Settle activity outcomes").
 
-If a note for this meeting already exists, add or refresh the `## Prep` section only; never touch the user's own notes in it.
+Create a new prep note with Write. If a note for this meeting already exists, add or refresh the `## Prep` section only, with Edit; never rewrite the note with a whole-file Write, and never touch the user's own notes in it.
 
 Agendas and questions are for the user. If they want to send an agenda to attendees, give them the text to copy; never send it.
 
@@ -86,7 +86,7 @@ On yes, read the meeting note and extract action items: owner, what, due date if
 
 - **The user's own items** → new loop lines in `Now.md` under **Commitments** (`— active — touched <today>[ — due D] — [[meeting note]]`).
 - **Items others owe the user** → `Now.md` **Waiting on**, and a line under `## Open items` in that person's note.
-- Mark the meeting note's action items with the loops they became, and add the line `Processed into loops on YYYY-MM-DD.` at the end of its `## Action items` section so the brief stops offering it.
+- Using Edit only (never a whole-file Write), mark the meeting note's action items with the loops they became, and add the line `Processed into loops on YYYY-MM-DD.` at the end of its `## Action items` section so the brief stops offering it.
 
 Apply according to the `action_items` level: at L0 list the proposed changes in the thread and wait (Pending approvals line, record outcome on the verdict); at L1 apply, log in the Activity log with `outcome: pending`, and report with links; at L2 apply and log the same way for the weekly review. If the user says no to the pass, still add `Processed into loops on YYYY-MM-DD (skipped).` so it isn't offered again.
 

@@ -355,10 +355,9 @@ test("no skill instructs running Bash, shell or date commands", () => {
   assert.match(contract, /A failed Read means the note doesn't exist/);
 });
 
-test("no Glob or Grep tool references: listing uses vault_list", () => {
-  // Claude Code sessions in the host have no Glob/Grep tool, so naming one sends
-  // the model back to the shell. Only a "there is none" note may mention them.
-  const allowed = /there is no glob or grep tool|not available|no shell/i;
+test("listing uses vault_list first; Glob only as the contract's fallback; no Grep", () => {
+  // vault_list is the host listing tool. Glob is allowed only as the contract's
+  // stated fallback when vault_list is unavailable; Grep is never a listed tool.
   const offenders: string[] = [];
   const files = [
     ...EXPECTED_SKILLS.map((id) => join("skills", id, "SKILL.md")),
@@ -369,11 +368,20 @@ test("no Glob or Grep tool references: listing uses vault_list", () => {
     read(file)
       .split("\n")
       .forEach((line, index) => {
-        if (/\b(?:glob|grep)\b/i.test(line) && !allowed.test(line)) offenders.push(`${file}:${index + 1}`);
-        if (/\b(?:Glob|Grep)\b/.test(line)) offenders.push(`${file}:${index + 1} (tool name)`);
+        const where = `${file}:${index + 1}`;
+        if (/\bgrep\b/i.test(line) && !/no shell/i.test(line)) offenders.push(`${where} (grep)`);
+        if (/\bGrep\b/.test(line)) offenders.push(`${where} (Grep tool)`);
+        if (/\bglob\b/i.test(line)) {
+          const isContractFallback = file === "skills/cos-contract/SKILL.md" && line.includes("vault_list") && /fallback/i.test(line);
+          if (!isContractFallback) offenders.push(`${where} (Glob outside the contract fallback)`);
+        }
       });
   }
   assert.deepEqual(offenders, []);
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /Glob is an acceptable fallback for listing/);
+  assert.doesNotMatch(contract, /there is no glob or grep tool/i);
+  assert.ok(contract.indexOf("`vault_list` first") !== -1, "vault_list must stay the first choice");
   for (const id of ["cos-setup", "cos-daily-brief", "cos-weekly-review", "cos-open-loops", "cos-meeting-prep"]) {
     assert.ok(read(join("skills", id, "SKILL.md")).includes("`vault_list`"), `${id} must list folders with vault_list`);
   }
@@ -564,4 +572,47 @@ test("weekly review: due today is not slipped, and status words match Now.md exa
   assert.match(weekly, /\*\*Use the `Now\.md` status words exactly\*\*: `active`, `blocked`, `waiting`, `done`, `dropped`/);
   const slipped = /## What slipped\n([\s\S]*?)\n## /.exec(weekly);
   assert.ok(slipped && !/due today/i.test(slipped[1]), "the example What slipped section must not contain a due-today item");
+});
+
+test("user-specific template fields are placeholders, never example values", () => {
+  // A concrete example in a template gets copied into the user's profile.
+  const userSpecific = new Set(["name", "role", "timezone", "status_update.audience", "status_update.format"]);
+  const placeholder = /^(?:""|"<[^"<>]+>")$/;
+  const offenders: string[] = [];
+  for (const file of TEMPLATES) {
+    const block = frontmatter(read(join("templates", file))) ?? "";
+    const stack: Array<{ indent: number; key: string }> = [];
+    for (const line of block.split("\n")) {
+      const match = /^(\s*)([A-Za-z_]+):\s*(.*)$/.exec(line);
+      if (!match) continue;
+      const indent = match[1].length;
+      while (stack.length > 0 && stack[stack.length - 1].indent >= indent) stack.pop();
+      const path = [...stack.map((entry) => entry.key), match[2]].join(".");
+      if (match[3] === "") stack.push({ indent, key: match[2] });
+      else if (userSpecific.has(path) && !placeholder.test(match[3].trim())) offenders.push(`templates/${file}: ${path} = ${match[3]}`);
+    }
+  }
+  assert.deepEqual(offenders, []);
+  assert.match(read("templates/Profile.md"), /^ {2}format: "<[^"]+>"$/m, "status_update.format must be a placeholder");
+  // The fictional example lives only in the schema doc (and HTML comments).
+  const example = "bullets: shipped / in progress / risks / asks";
+  assert.ok(read("docs/profile-schema.md").includes(example));
+  for (const id of EXPECTED_SKILLS) {
+    const withoutComments = read(join("skills", id, "SKILL.md")).replace(/<!--[\s\S]*?-->/g, "");
+    assert.ok(!withoutComments.includes(example), `${id} carries the example status format outside a comment`);
+  }
+  assert.match(read("skills/cos-setup/SKILL.md"), /\*\*Replace every `<…>` placeholder with the user's own words from the approved draft\*\*, or with `""`/);
+});
+
+test("existing notes are changed with Edit, never rewritten with a whole-file Write", () => {
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /\*\*Once a note exists, change it only with Edit, never with a whole-file Write\.\*\*/);
+  assert.match(contract, /Don't fall back to Write\./);
+  for (const id of ["cos-daily-brief", "cos-weekly-review", "cos-open-loops", "cos-meeting-prep", "cos-setup"]) {
+    const body = read(join("skills", id, "SKILL.md"));
+    assert.match(body, /never (?:rewrite [^.]*with a whole-file Write|a whole-file Write)|\(never a whole-file Write\)/i, `${id} must forbid whole-file rewrites`);
+  }
+  for (const id of EXPECTED_SKILLS) {
+    assert.doesNotMatch(read(join("skills", id, "SKILL.md")), /rewrite the whole note/i, `${id} suggests rewriting a whole note`);
+  }
 });

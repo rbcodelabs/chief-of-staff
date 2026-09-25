@@ -37,6 +37,8 @@ status_update:
 
 **Folders** used by the pack (`Weekly/`, the projects, people and meetings folders, daily-note sub-folders) are created implicitly when the first note is written into them. The pack never creates an empty folder.
 
+The values above are a fictional example. The starter in `templates/Profile.md` carries `<…>` placeholders for every user-specific field (`name`, `role`, `timezone`, `status_update.audience`, `status_update.format`). Setup replaces each one with the user's own words from the approved Setup Draft, or `""` if not given, so the example never reaches a real profile.
+
 Field notes:
 
 - **`home_thread_id`** is the id returned by `threads_get_current` in the thread where setup ran. Scheduled rituals run in their own threads and cannot set a proposed reply on themselves, so they target this id.

@@ -48,9 +48,9 @@ For each **Activity log** line in `Autonomy.md` at L1 with `outcome: pending` an
 
 Create today's daily note if it's missing: if `.obsidian/daily-notes.json` names a `template`, start from that template's contents; otherwise create an empty note. Write it with the Write tool; any folders in the path (including sub-folders the format implies) are created implicitly. No shell commands.
 
-Add to the note without overwriting existing content. Read the whole note first, then place the brief so that `## Chief of Staff Updates` (written by other skills) stays last:
+**Once the daily note exists, add to it only with Edit; never rewrite it with a whole-file Write** (see `cos-contract`, "Editing existing notes"). Write is used only above, to create a missing note. Read the whole note first, then place the brief so that `## Chief of Staff Updates` (written by other skills) stays last:
 
-- **No brief yet today:** if `## Chief of Staff Updates` exists, put `## Chief of Staff Brief` immediately before it; otherwise append the brief at the end of the note.
+- **No brief yet today:** if `## Chief of Staff Updates` exists, Edit with that heading line as the anchor, replacing it with the brief followed by the same heading, so the brief lands immediately before it. Otherwise append the brief at the end of the note with an Edit anchored on the note's last lines.
 - **Brief already there** (for example the brief was re-run): add a `### Update HH:MM` subsection at the end of the brief section, still before any `## Chief of Staff Updates`. Never add a second `## Chief of Staff Brief` heading.
 
 ```
