@@ -50,8 +50,9 @@ Window: YYYY-MM-DD to YYYY-MM-DD
 ## What moved
 - [[Projects/Checkout Redesign]]: beta reached 10% of traffic
 ## What slipped
-- Vendor contract: due Wednesday, still open
+- Vendor contract: due 2026-09-23, still open
 ## What's next
+- Due today: Send the Q4 hiring plan to Sam
 1. ...
 ## Done on my own
 - <L2 activity in the window, then L1 activity> — [[link]] — <outcome>
@@ -61,7 +62,9 @@ Window: YYYY-MM-DD to YYYY-MM-DD
 <see step 5>
 ```
 
-(Example lines are fictional.) "What's next" comes from the Priorities list, open loops with due dates next week, and anything the user said they'd do.
+(Example lines are fictional.) "What's next" comes from the Priorities list, open loops due today or next week, and anything the user said they'd do.
+
+**Slipped means overdue, and nothing else.** Compare each `due` date with today exactly (see `cos-contract`, "Dates and times"). Only an open loop whose `due` date is *before* today goes under **What slipped**. A loop due today has not slipped: list it first under **What's next** as "Due today: …". A loop due later isn't slipped either.
 
 The weekly note is this task's review surface, so write it at any level. Cleanup of `Now.md` (clearing **Done** entries older than two weeks, reordering Priorities to match what the week showed) follows the `weekly_review` level: at L0 list the proposed cleanup under **What needs you** and wait; at L1 do it and report; at L2 do it and list it under **Done on my own**. Log L1/L2 cleanup in the Activity log with `outcome: pending`. Clearing settled Activity log entries older than four weeks that already appeared in a weekly review is housekeeping and always allowed.
 
@@ -73,6 +76,11 @@ Write it for `status_update.audience` in `status_update.format` from the profile
 
 - Bad: "Legal review hasn't started." (The notes only say you're waiting on it.)
 - Good: "Waiting on legal review (no update since 2026-09-20)."
+
+**Use the `Now.md` status words exactly**: `active`, `blocked`, `waiting`, `done`, `dropped`. A loop recorded as `waiting` is "waiting"; don't rephrase it as "active — waiting on" or "in progress". Don't mix two statuses on one line, and don't invent new ones ("stalled", "at risk").
+
+- Bad: "Legal review: active — waiting on legal."
+- Good: "Legal review: waiting (no update since 2026-09-20)."
 
 Keep it ready to paste: no internal links, no private worries unless the user flagged them as shareable, names as the audience would know them.
 

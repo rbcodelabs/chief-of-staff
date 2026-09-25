@@ -88,7 +88,7 @@ Throughout, add every document the user mentions to the import list: name, locat
 
 ## Step 5: write `Setup Draft.md` (the only write before "go")
 
-Write `<cos_folder>/Setup Draft.md` (default `Chief of Staff/Setup Draft.md`). Start from the pack's `templates/Setup Draft.md` (two folders above this skill: `../../templates/`); if you can't read it, use this shape:
+Write `<cos_folder>/Setup Draft.md` (default `Chief of Staff/Setup Draft.md`). Start from the **Setup Draft template** in "Embedded templates" at the end of this skill. It is complete; don't look for the pack's files on disk. Fill it in this shape:
 
 - Frontmatter: `cos_version: 1`, `status: draft`, `created_at: <the current time, ISO-8601 with offset; date-only if your context has no exact time>`, `applied_at: ""` (filled in at "go").
 - Checkbox sections, **one line per item**, every item checked (`- [x]`) by default so the user only unchecks what they don't want:
@@ -108,11 +108,11 @@ Wait. If the user asks for changes in chat, update the draft and wait again.
 
 Call `threads_get_current` again (your memory of step 1 may not survive a long conversation) and use its `id` as `home_thread_id`; keep its `cwd` and project for scheduling in step 9.
 
-Re-read `Setup Draft.md` (the user may have edited it) and use only **checked** (`- [x]`) items. Then write:
+Re-read `Setup Draft.md` (the user may have edited it) and use only **checked** (`- [x]`) items. Then write the notes below. Start each pack file from its template in "Embedded templates" at the end of this skill; those blocks are complete, so never list or read the pack's own folders.
 
-1. **`<cos_folder>/Profile.md`** from `templates/Profile.md`: fill `name`, `role`, `timezone` (as confirmed in the draft), `home_thread_id`, `locations` (from step 2), `sources` (`google_drive: true` only if Google Workspace tools are available and the user uses Drive; `calendar` from step 3), `status_update`. Leave `setup_completed_at` empty and rituals disabled for now. Fill the body sections: Working context, Key people (linking to people notes), Current priorities, Preferences.
-2. **`<cos_folder>/Now.md`** from `templates/Now.md`: projects under **Projects**, commitments under **Commitments**, waiting-on items under **Waiting on**, worries under **Worries**, each `— active — touched <today>` (or `waiting`/`blocked` as the user said), plus a numbered **Priorities** list in the order the user gave. Set `updated_at` to today (`YYYY-MM-DD`).
-3. **`<cos_folder>/Autonomy.md`** from `templates/Autonomy.md`: every task type at `L0`, streak 0, no outcomes. Set `updated_at` to today (`YYYY-MM-DD`).
+1. **`<cos_folder>/Profile.md`** from the Profile template: fill `name`, `role`, `timezone` (as confirmed in the draft), `home_thread_id`, `locations` (from step 2), `sources` (`google_drive: true` only if Google Workspace tools are available and the user uses Drive; `calendar` from step 3), `status_update`. Leave `setup_completed_at` empty and rituals disabled for now. Fill the body sections: Working context, Key people (linking to people notes), Current priorities, Preferences.
+2. **`<cos_folder>/Now.md`** from the Now template: projects under **Projects**, commitments under **Commitments**, waiting-on items under **Waiting on**, worries under **Worries**, each `— active — touched <today>` (or `waiting`/`blocked` as the user said), plus a numbered **Priorities** list in the order the user gave. Set `updated_at` to today (`YYYY-MM-DD`).
+3. **`<cos_folder>/Autonomy.md`** from the Autonomy template: every task type at `L0`, streak 0, no outcomes. Set `updated_at` to today (`YYYY-MM-DD`).
 4. **Project notes** in `locations.projects`: one per checked project, `<Project name>.md`, with the goal, a **People** list linking to people notes, and an **Open loops** list linking back to `[[<cos_folder>/Now]]`. If a note with that name already exists, append a `## Chief of Staff` section instead of overwriting.
 5. **People notes** in `locations.people`: one per checked person, `<Full name>.md`, with relationship and links to their projects. Same rule for existing notes.
 6. Update `Setup Draft.md` frontmatter: `status: applied`, and `applied_at` set to the actual time the user said "go" (ISO-8601 with offset, or date-only if your context has no exact time). It is never earlier than `created_at`; never copy `created_at` into it.
@@ -170,3 +170,227 @@ Three lines. First work out the **next actual run** of the daily brief from toda
 (Adjust to the rituals they actually turned on. If they declined the brief, drop the first line.)
 
 Every line is a complete sentence that stands on its own. Never write a lead-in that ends in a colon or trails off, such as "Today's Friday review already passed 3pm, so:". If a ritual's first run is later than usual (for example, today's review time has already passed), say it in a full sentence: "Your first Friday review is next Friday at 15:00."
+
+## Embedded templates
+
+These are exact copies of the pack's template files, included here so setup never has to find them on disk. Copy a block's contents (without the fence), fill in the values, and write it with Write.
+
+### Setup Draft template (`Setup Draft.md`)
+
+<!-- embedded-template: Setup Draft.md -->
+````markdown
+---
+cos_version: 1
+status: draft
+created_at: ""
+applied_at: ""
+---
+
+# Setup Draft
+
+Here is what I understood. Everything is checked; edit anything, uncheck what you don't want, then say **"go"** in our thread. Only checked items are used, and nothing else gets written until you do.
+
+## Profile
+
+- [x] Name: <!-- e.g. Jordan Lee -->
+- [x] Role and team: <!-- e.g. Senior PM, Payments -->
+- [x] Timezone: <!-- e.g. America/Chicago -->
+- [x] Folders: <!-- e.g. daily notes in Daily/ (YYYY-MM-DD), projects in Projects/, people in People/, meetings in Meetings/ -->
+- [x] Status updates go to: <!-- e.g. my manager and the payments leads, as bullets: shipped / in progress / risks / asks -->
+- [x] Preferences: <!-- e.g. short bullets; never touch Journal/ -->
+
+## Projects
+
+<!-- One line each: name — one-line goal — key people. e.g.
+- [x] Checkout Redesign — ship beta to 10% of traffic — Sam Rivera, Avery Chen
+-->
+
+## People
+
+<!-- One line each: name — relationship — projects. e.g.
+- [x] Sam Rivera — manager — all projects
+-->
+
+## Open loops
+
+<!-- One line each: what — status — kind (commitment / waiting on / worry). e.g.
+- [x] Send the Q4 hiring plan to Sam — active — commitment, due 2026-10-01
+-->
+
+## Documents to import
+
+<!-- One line each: document — where it lives — project. Up to 3 are imported during setup; the rest are marked "(later)". e.g.
+- [x] Checkout Redesign PRD — Google Drive, "Checkout PRD v3" — Checkout Redesign
+-->
+````
+
+### Profile template (`Profile.md`)
+
+<!-- embedded-template: Profile.md -->
+````markdown
+---
+cos_version: 1
+name: ""
+role: ""
+timezone: ""
+home_thread_id: ""
+setup_completed_at: ""
+locations:
+  cos_folder: "Chief of Staff"
+  daily_notes: { folder: "Daily", format: "YYYY-MM-DD" }
+  projects: "Projects"
+  people: "People"
+  meetings: "Meetings"
+rituals:
+  daily_brief: { enabled: false, time: "08:00", days: [1,2,3,4,5], schedule_id: "" }
+  open_loops_check: { enabled: false, time: "13:00", days: [1,2,3,4,5], schedule_id: "", stale_after_days: 5 }
+  weekly_review: { enabled: false, day: 5, time: "15:00", schedule_id: "" }
+sources:
+  google_drive: false
+  calendar: "none"
+status_update:
+  audience: ""
+  format: "bullets: shipped / in progress / risks / asks"
+---
+
+# Chief of Staff Profile
+
+This note tells your chief of staff who it works for. Edit it any time; every Chief of Staff skill reads it before acting.
+
+## Working context
+
+<!-- Team, scope, how work flows. e.g. "Senior PM on the Payments team; ships through two squads; quarterly planning in the last two weeks of each quarter." -->
+
+## Key people
+
+<!-- One line each, linking to a person note. e.g. "[[People/Sam Rivera]] — manager; weekly 1:1 on Tuesdays" -->
+
+## Current priorities
+
+<!-- The few things that matter this quarter. -->
+
+## Preferences
+
+<!-- Tone, length, what to leave alone. e.g. "Short bullets. Never touch my Journal folder." -->
+````
+
+### Now template (`Now.md`)
+
+<!-- embedded-template: Now.md -->
+````markdown
+---
+cos_version: 1
+updated_at: ""
+---
+
+# Now
+
+Open loops your chief of staff tracks. Loop line format:
+`- [ ] <what> — <status> — touched YYYY-MM-DD — due YYYY-MM-DD — [[link]]` (status: active, blocked or waiting; due and link are optional).
+
+## Priorities
+
+<!-- Numbered, most important first. The first three appear in the daily brief. e.g.
+1. [[Projects/Checkout Redesign]] — ship beta to 10% of traffic
+-->
+
+## Projects
+
+<!-- e.g. - [ ] [[Projects/Checkout Redesign]] — active — touched 2026-09-24 -->
+
+## Commitments
+
+<!-- e.g. - [ ] Send the Q4 hiring plan to Sam — active — touched 2026-09-22 — due 2026-10-01 -->
+
+## Waiting on
+
+<!-- e.g. - [ ] Legal review of the new terms (Avery) — waiting — touched 2026-09-20 -->
+
+## Worries
+
+<!-- e.g. - [ ] Fraud rate creeping up after the pricing change — active — touched 2026-09-23 -->
+
+## Done
+
+<!-- Finished or dropped loops, kept for two weeks. e.g. - [x] Draft launch FAQ — done 2026-09-24 -->
+````
+
+### Autonomy template (`Autonomy.md`)
+
+<!-- embedded-template: Autonomy.md -->
+````markdown
+---
+cos_version: 1
+updated_at: ""
+---
+
+# Autonomy
+
+How much your chief of staff does on its own, per task type. Everything starts at L0.
+
+- **L0 draft**: drafts for you, waits for approval before touching other notes.
+- **L1 act and report**: makes vault-only changes and reports them with links.
+- **L2 act and batch**: makes vault-only changes and reports them in the weekly review.
+
+Anything that would reach another person is always a draft, whatever the level. Only your "yes" changes a level; ask any time to change one. The daily brief only writes its own section, so it stays at L0.
+
+## daily_brief
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## meeting_prep
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## action_items
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## open_loops_update
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## weekly_review
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## status_update_draft
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## note_filing
+
+| level | streak | last 10 outcomes |
+|---|---|---|
+| L0 | 0 | — |
+
+## Pending approvals
+
+<!-- One line per draft waiting for you. e.g.
+- 2026-09-26 meeting_prep — prep for roadmap review — [[Meetings/2026-09-26 Roadmap review]] — awaiting
+-->
+
+## Activity log
+
+<!-- Vault changes made without asking (L1/L2). Each starts as "outcome: pending" and is settled by the next brief (L1) or weekly review (L2): kept as written = approved, edited by you = approved-with-edits, reverted or "that was wrong" = rejected. e.g.
+- 2026-09-26 open_loops_update (L1) — marked "Draft launch FAQ" done — [[Chief of Staff/Now]] — outcome: pending
+-->
+
+## Change log
+
+<!-- Level changes and why. e.g.
+- 2026-10-10 meeting_prep L0 → L1 — you approved the last 10 prep notes
+-->
+````
