@@ -1,7 +1,7 @@
 {
   "name": "chief-of-staff",
   "displayName": "Chief of Staff",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A chief of staff that works over your Obsidian vault: a 10-minute setup interview, a daily brief, open-loop check-ins, meeting prep and a Friday review with a draft status update. Built for Geode / Agent Threads.",
   "author": {
     "name": "RB Code Labs"

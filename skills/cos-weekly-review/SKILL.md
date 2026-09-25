@@ -87,7 +87,7 @@ Run the promotion and demotion checks from `cos-autonomy` for every task type. L
 
 ## Step 6: report
 
-Post the contract's "What I did / What needs you" summary with a link to the weekly note. Add a one-line pointer to the weekly note in today's daily note under `## Chief of Staff Updates` as `### HH:MM cos-weekly-review`, where `HH:MM` is the actual time you write it, not the ritual's scheduled time.
+Post the contract's "What I did / What needs you" summary with a link to the weekly note. Add a one-line pointer to the weekly note in today's daily note under `## Chief of Staff Updates` as `### HH:MM cos-weekly-review`, where `HH:MM` is the actual time you write it, not the ritual's scheduled time (or `### cos-weekly-review` if you don't know the time). The `Weekly/` folder is created implicitly by writing the note; never create it separately.
 
 If something needs the user (a status draft at L0, a proposal, stale loops, or an unanswered check-in) and you are **not** the home thread, set one proposed reply on the home thread with `threads_set_proposed_reply` (`threadId: home_thread_id`). The open-loops ritual skips this day, so fold its questions in here: any still-unanswered check-in questions from **Pending approvals**, plus up to 3 stale loops if there was no check-in this week. Leave every verdict for the user to fill in; never pre-fill consent:
 
@@ -99,6 +99,6 @@ Open loops (edit, then send):
 1. Hiring plan: 6 days quiet. Still active, blocked, or drop it? → still active (default)
 ```
 
-**When no proposals are due, leave the `Proposals:` line out of the proposed reply entirely.** Don't write "Proposals: none", "Proposals: none due this week" or anything similar; "None this week." belongs only in the weekly note. Likewise, leave out the `Status update:` line at L1 and the `Open loops` block when there are none. Only open-loop status answers get defaults, as in `cos-open-loops`. If you are the home thread, ask directly instead.
+**When no proposals are due, leave the `Proposals:` line out of the proposed reply entirely.** Likewise, leave out the `Status update:` line at L1 and the `Open loops` block when there are none. **Add NO note, parenthetical or sentence about missing proposals or check-ins in the proposed reply**: not "Proposals: none", not "(No autonomy proposals or open-loop check-ins this week)", nothing. A missing line says it all. "None this week." belongs only in the weekly note. Only open-loop status answers get defaults, as in `cos-open-loops`. If you are the home thread, ask directly instead.
 
 If this is a scheduled run and nothing needs the user, archive this thread with `threads_archive` (see `cos-contract`, section 6).

@@ -329,8 +329,10 @@ test("no personal data or machine-specific paths in the pack", () => {
 test("no skill instructs running Bash, shell or date commands", () => {
   // Unattended rituals stall on a shell permission prompt, so shell use may
   // only ever be mentioned as a prohibition.
-  const mention = /\b(?:bash|shell|terminal|command line)\b|`date\b|\bdate \+|\bIntl\./i;
-  const outright = /`date\s+[+-]|\bdate \+%|\bIntl\.DateTimeFormat|\bnpx\b|\bnode -e\b/;
+  const mention =
+    /\b(?:bash|shell|terminal|command line)\b|`(?:date|ls|find|mkdir|readlink|cat)\b|\bdate \+|\bIntl\./i;
+  const outright =
+    /`date\s+[+-]|\bdate \+%|\bIntl\.DateTimeFormat|\bnpx\b|\bnode -e\b|\bmkdir -p\b|\breadlink\s+[-/]|\bls\s+-[a-zA-Z]|\bfind\s+[.~/]|\bcat\s+[<"'`/~.\w-]+\.(?:md|json)\b/;
   const negation = /\b(?:never|don't|do not|no)\b/i;
   const offenders: string[] = [];
   for (const id of EXPECTED_SKILLS) {
@@ -342,7 +344,62 @@ test("no skill instructs running Bash, shell or date commands", () => {
     });
   }
   assert.deepEqual(offenders, []);
-  assert.match(read("skills/cos-contract/SKILL.md"), /### Dates and times: work them out yourself/);
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /### Dates and times: work them out yourself/);
+  assert.match(contract, /### Tools: no shell, ever/);
+  assert.match(contract, /never run a Bash, shell or terminal command for anything/);
+  for (const tool of ["Glob", "Read", "Write", "vault_search"]) {
+    assert.ok(contract.includes(tool), `cos-contract must direct the model to ${tool}`);
+  }
+});
+
+test("folders are created implicitly, never empty", () => {
+  assert.match(read("skills/cos-contract/SKILL.md"), /\*\*Folders are created implicitly\*\*.*Never create an empty folder/);
+  assert.match(read("skills/cos-setup/SKILL.md"), /never create an empty folder/);
+  assert.match(read("docs/profile-schema.md"), /never creates an empty folder/);
+});
+
+test("timezone comes from session context and times are never fabricated", () => {
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /IANA timezone/);
+  assert.match(contract, /\*\*Never fabricate a time\.\*\*.*date only/);
+  assert.match(read("skills/cos-setup/SKILL.md"), /\*\*Timezone:\*\* read it from your session context/);
+  assert.match(read("docs/profile-schema.md"), /timestamp is date-only/);
+});
+
+test("every scripted question in cos-setup asks exactly one thing", () => {
+  const setup = read("skills/cos-setup/SKILL.md");
+  const offenders: string[] = [];
+  for (const line of setup.split("\n")) {
+    if (/^\s*- Bad:/.test(line)) continue; // the deliberate counter-example
+    const scripted = line.startsWith(">") ? [line] : [...line.matchAll(/"([^"]*\?[^"]*)"/g)].map((m) => m[1]);
+    for (const text of scripted) {
+      if ((text.match(/\?/g) ?? []).length > 1) offenders.push(text.trim());
+    }
+  }
+  assert.deepEqual(offenders, []);
+  const handoff = /"(I've put everything in [^"]*)"/.exec(setup);
+  assert.ok(handoff, "cos-setup needs a scripted draft hand-off message");
+  assert.equal((handoff[1].match(/\?/g) ?? []).length, 1, "the hand-off must end with exactly one question");
+  assert.ok(handoff[1].trim().endsWith("?"), "the hand-off must end with its question");
+});
+
+test("user's words, exact dates, and due-today handling", () => {
+  const contract = read("skills/cos-contract/SKILL.md");
+  assert.match(contract, /\*\*Keep the user's words\.\*\*/);
+  assert.match(contract, /including capitalization/);
+  assert.match(contract, /Never add parties, owners or details the user didn't name/);
+  assert.match(contract, /A `due` date equal to today is "due today", not "overdue"/);
+  const brief = read("skills/cos-daily-brief/SKILL.md");
+  assert.match(brief, /Flag every loop due today as "due today", including in the very first brief/);
+  assert.match(brief, /A loop due today is never "overdue"/);
+});
+
+test("weekly review adds no note about missing proposals or check-ins", () => {
+  assert.match(
+    read("skills/cos-weekly-review/SKILL.md"),
+    /\*\*Add NO note, parenthetical or sentence about missing proposals or check-ins in the proposed reply\*\*/,
+  );
 });
 
 test("date fields are YYYY-MM-DD and timestamps are ISO-8601 with offset", () => {

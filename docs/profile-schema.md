@@ -33,7 +33,9 @@ status_update:
   format: "bullets: shipped / in progress / risks / asks"
 ```
 
-**Date and time formats (all pack files):** `updated_at`, `touched` and `due` are dates, `YYYY-MM-DD`. `created_at`, `applied_at` and `setup_completed_at` are timestamps, ISO-8601 with offset (e.g. `2026-09-25T09:40:00-05:00`), recorded when the event actually happens. Empty (`""`) means "not yet". Skills work dates out from the current date and time in their context and never run shell commands to do it.
+**Date and time formats (all pack files):** `updated_at`, `touched` and `due` are dates, `YYYY-MM-DD`. `created_at`, `applied_at` and `setup_completed_at` are timestamps, ISO-8601 with offset (e.g. `2026-09-25T09:40:00-05:00`), recorded when the event actually happens. **When the exact current time isn't known, a timestamp is date-only** (`2026-09-25`); a time is never made up (no `T00:10:00+00:00` placeholders). Empty (`""`) means "not yet". Skills take the date, time and timezone from their session context (the host may supply local time, IANA timezone and UTC offset) and never run shell commands to get them. A `due` date equal to today is "due today"; only an earlier one is "overdue".
+
+**Folders** used by the pack (`Weekly/`, the projects, people and meetings folders, daily-note sub-folders) are created implicitly when the first note is written into them. The pack never creates an empty folder.
 
 Field notes:
 
